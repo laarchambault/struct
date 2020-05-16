@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 
 class SignupForm extends Component {
 
@@ -31,11 +32,16 @@ class SignupForm extends Component {
             body: JSON.stringify(this.state)
 
         })
-        .then(r => r.json())
+        .then(r => {
+            if(r.ok) {
+                return r.json()
+            } else {
+                throw r
+            }
+        })
         .then(data => {
             this.props.submitSignup(data.id)
-            console.log(data);
-            debugger
+            this.props.history.push('/jobs')
 
         })
         .catch(error => alert(error))
@@ -43,9 +49,7 @@ class SignupForm extends Component {
             alert("Passwords do not match")
         }  
         
-        //render user or error message
-        // this.props.submitSignup(currentUser)
-        //.catch alert error message
+
     }
 
     render() {
@@ -90,4 +94,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(null, mapDispatchToProps)(SignupForm)
+export default withRouter(connect(null, mapDispatchToProps)(SignupForm))

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 
 const initialState = {
     email: '',
@@ -8,6 +9,7 @@ const initialState = {
 
 class LoginForm extends Component {
     state=initialState
+
 
     handleChange = e => {
         this.setState({ [e.target.name]: e.target.value })
@@ -24,17 +26,19 @@ class LoginForm extends Component {
             body: JSON.stringify(this.state)
 
         })
-        .then(r => r.json())
+        .then(r => {
+            if(r.ok) {
+                return r.json()
+            } else {
+                throw r
+            }
+        })
         .then(data => {
             this.props.submitLogin(data.id)
-            console.log(data);
-            debugger
+            this.props.history.push('/jobs')
 
         })
-        .catch(error => alert(error))
-        //render user or error message
-        // this.props.submitSignup(currentUser)
-        //.catch alert error message
+        .catch(r => alert("Invalid login. Please try again or create an account."))
     }
 
     render() {
@@ -58,4 +62,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(null, mapDispatchToProps)(LoginForm)
+export default withRouter(connect(null, mapDispatchToProps)(LoginForm))

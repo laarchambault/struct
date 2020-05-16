@@ -1,3 +1,4 @@
+
 class UsersController < ApplicationController
 
     skip_before_action :authorized, only: [:create, :login]
@@ -13,13 +14,38 @@ class UsersController < ApplicationController
         end
     end
 
+    def show
+        user = User.find_by(id: session[:user_id])
+        if user
+            render json: user
+        else
+            render json: {error: "Unable to fetch user details"}
+        end
+    end
+
+    def autologin
+        user = User.find_by(id: session[:user_id])
+        render json: user
+    end
+
     def login
         user = User.find_by(email: params[:email])
         if user && user.authenticate(params[:password])
+            session[:user_id] = user.id
             render json: user
         else
             render json: {error: "Unable to log in. Retry password or create an account"}, status: :bad_request
         end
     end
+
+    def logout
+        reset_session
+        render json: { message: "Logged out" }
+    end
+
+    # def key
+    #     key = ENV['S3_BUCKET']
+    #     render json: {key: key}
+    # end
 
 end
