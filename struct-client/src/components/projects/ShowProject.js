@@ -36,7 +36,7 @@ class ShowProject extends React.Component {
     render() {
         return(
             <Grid divided='vertically' > {/*className={come up with something to style the project like a box>}*/} 
-
+                <Button onClick={this.props.showEdit}>Edit Project Details</Button>
                 <Grid.Row columns={2}>
                     <Grid.Column floated='left' textAlign='left'>
                         <h3>{this.props.currentJob.name}</h3>

@@ -2,9 +2,10 @@ import React from 'react'
 import { convertUserToUnix } from '../../calculations/timeConversions.js'
 import { connect } from 'react-redux'
 import { Form } from 'semantic-ui-react'
-import { statusOptions } from './projectFunctions'
+import { statusOptions, returnEditStateFromProject } from './projectFunctions'
 
-class NewProject extends React.Component {
+
+class EditProject extends React.Component {
 
     state={
         name: '',
@@ -36,7 +37,6 @@ class NewProject extends React.Component {
         e.preventDefault()
         const startUnix = convertUserToUnix('start', this.state)
         const endUnix = convertUserToUnix('end', this.state)
-        console.log(startUnix, endUnix)
         const bodyObj = {
             name: this.state.name,
             start_time: startUnix,
@@ -45,8 +45,8 @@ class NewProject extends React.Component {
             status: this.state.status,
             job_id: this.props.currentJob.id
         }
-        fetch('http://localhost:3000/projects', {
-            method: 'POST',
+        fetch(`http://localhost:3000/projects/${this.props.project.id}`, {
+            method: 'PUT',
             credentials: "include",
             headers: {
                 'Content-Type': 'application/json'
@@ -63,15 +63,16 @@ class NewProject extends React.Component {
         .then(project => {
             this.props.setView(project)
         })
-        .catch(error => alert(error))
+        .catch(error => console.log(error))
     }
 
-    componentDidMount(){
+    componentDidMount() {
         //TODO after you establish user friends,
         //fetch users connected to currentUser
         //this.setState({ users: []})
         //create checkbox/text search in form to add subcontractors
         //set subcontractor permision level 2
+        this.setState(returnEditStateFromProject(this.props.project))
     }
 
     render() {
@@ -106,7 +107,7 @@ class NewProject extends React.Component {
                         options={statusOptions}
                         onChange={this.handleDropdown}
                     /><br/><br/>
-                    <Form.Input type='submit' value='Create Project' />
+                    <Form.Input type='submit' value='Update' />
                 </Form>
             </div>
         )
@@ -120,4 +121,4 @@ const mapStateToProps = state =>{
     }
 }
 
-export default connect(mapStateToProps)(NewProject)
+export default connect(mapStateToProps)(EditProject)

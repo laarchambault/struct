@@ -14,9 +14,6 @@ import './App.css';
 class App extends React.Component {
 
   componentDidMount() {
-    fetch('http://localhost:3000/key')
-    .then(r => r.json())
-    .then(r => console.log(r))
     fetch('http://localhost:3000/autologin', {
       credentials: "include"
     })
