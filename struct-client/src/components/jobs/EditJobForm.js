@@ -1,41 +1,57 @@
 import React, { Component } from 'react'
+import ContactAssignInput from '../contacts/ContactAssignInput.js'
 
 import { connect } from 'react-redux'
+import { fetchEditJob, fetchAssignContactsToJob } from './fetches.js'
 
 class EditJobForm extends Component {
     state={
         name: '',
         street_address: '',
         city: '',
-        state: ''
+        state: '',
+        checkedContacts: []
     }
 
     handleChange = e => {
         this.setState({ [e.target.name]: e.target.value })
     }
 
+    //below method is duplicated on NewJob.js. TODO: move to fetches.js or new helper file
+    handleContactChange = (e, { value }) => {
+        const arr = value.split(' ')
+        const permiss = arr[0]
+        const u_id = arr[1]
+        const updCheckedContacts = [...this.state.checkedContacts]
+        const i = updCheckedContacts.findIndex(obj => {
+            return obj.user_id === u_id
+        })
+        const newContact = {user_id: u_id, permission: permiss}
+            if( i < 0 ) {
+                updCheckedContacts.push(newContact)
+            } else {
+                if(permiss === '4') {
+                    updCheckedContacts.splice(i, 1)
+                } else {
+                    updCheckedContacts[i] = newContact
+                }
+            }
+            this.setState({
+                ...this.state,
+                checkedContacts: updCheckedContacts
+            })
+    }
+
     handleSubmit = e => {
         e.preventDefault()
-        fetch(`http://localhost:3000/jobs/${this.props.match.params.id}`, {
-            method: 'PUT',
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(this.state)
-        })
-        .then(r => {
-            if(r.ok) {
-                return r.json()
-            } else {
-                throw r
-            }
-        })
+        const id = this.props.match.params.id
+        fetchEditJob(id, this.state)
         .then(job => {
             const newJobs = [...this.props.jobs]
             const i = newJobs.findIndex(listedJob => listedJob.id === job.id)
             newJobs[i] = job
             this.props.updateJobs(newJobs)
+            fetchAssignContactsToJob({checkedContacts: this.state.checkedContacts}, job.id)
             this.props.history.push(`/jobs/${job.id}`)
         })
         .catch(error => alert("Unable to update at this time"))
@@ -53,8 +69,6 @@ class EditJobForm extends Component {
         })
     }
 
-    //return job and update JobContainer state
-    //and send user to /jobs/:id
 
     render() {
         return(
@@ -77,6 +91,8 @@ class EditJobForm extends Component {
                         State:
                         <input type='text' value={this.state.state} name="state" onChange={this.handleChange}/>
                     </label><br/>
+                    <h2>Add Users to This Job </h2>
+                    {this.props.contacts.map(contact => <ContactAssignInput contact={contact} handleChange={this.handleContactChange} checkedContacts={this.state.checkedContacts}/>)}
                     <input type='submit'/>
                 </form>
             </div>
@@ -86,7 +102,10 @@ class EditJobForm extends Component {
 }
 
 const mapStateToProps = state => {
-    return { jobs: state.jobs }
+    return { 
+        jobs: state.jobs,
+        contacts: state.contacts
+    }
 }
 
 const mapDispatchToProps = dispatch => {

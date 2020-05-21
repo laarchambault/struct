@@ -77,10 +77,6 @@ class NewJob extends Component {
                         <input type='text' value={this.state.state} name="state" onChange={this.handleChange}/>
                     </label><br/>
                     <h2>Add Users to This Job </h2>
-                    <h2><em>set permissions for viewing/editing</em></h2>
-                    <h4><em>Builder: full view/edit permissions</em></h4>
-                    <h4><em>Subcontractor: view/edit own projects, permitted fields only. Can view public fields</em></h4>
-                    <h4><em>Viewer: view-only permission for public details</em></h4>
                     {this.props.contacts.map(contact => <ContactAssignInput contact={contact} handleChange={this.handleContactChange} checkedContacts={this.state.checkedContacts}/>)}
                     <input type='submit'/>
                 </form>

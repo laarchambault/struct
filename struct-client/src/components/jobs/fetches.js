@@ -17,6 +17,24 @@ export const fetchCreateJob = bodyObj => {
     })
 }
 
+export const fetchEditJob = (id, bodyObj) => {
+    return fetch(`http://localhost:3000/jobs/${id}`, {
+        method: 'PUT',
+        credentials: "include",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyObj)
+    })
+    .then(r => {
+        if(r.ok) {
+            return r.json()
+        } else {
+            throw r
+        }
+    })
+}
+
 export const fetchAssignContactsToJob = (contactObj, job_id) => {
     debugger
     fetch(`http://localhost:3000/jobs/${job_id}/contacts`, {
