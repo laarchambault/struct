@@ -38,7 +38,7 @@ class ShowProject extends React.Component {
     render() {
         const { permission, showEdit, project, currentJob } = this.props
         return(
-            <Grid divided='vertically' > {/*className={come up with something to style the project like a box>}*/} 
+            <Grid divided='vertically' > {/*TODO: className={come up with something to style the project like a box>}*/} 
                 { permission === 1 || permission === 2 ?
                     <Button onClick={showEdit}>Edit Project Details</Button>
                 : null}
@@ -70,7 +70,7 @@ class ShowProject extends React.Component {
                         <Button onClick={this.handleStatusChange}>Approved</Button><br/>
                     </Grid.Row>
                 : null}
-                
+    
                 { permission === 1 || permission === 2 ?
                     <Grid.Row columns={1}>
                     <Grid.Column>

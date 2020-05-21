@@ -7,22 +7,22 @@ class ContactAssignInput extends Component {
         let { handleChange} = this.props
         const permissionOptions = [
             {
-                key: id,
+                key: `4 ${id}`,
                 text: 'None',
                 value: `4 ${id}`,
             },
             {
-                key: id,
+                key: `1 ${id}`,
                 text: 'Builder: view/edit everything',
                 value: `1 ${id}`,
             },
             {
-                key: id,
+                key: `2 ${id}`,
                 text: 'Subcontractor: view/edit some fields',
                 value: `2 ${id}`,
             },
             {
-                key: id,
+                key: `3 ${id}`,
                 text: 'Viewer: view-only some fields',
                 value: `3 ${id}`,
             },            

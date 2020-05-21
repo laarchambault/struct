@@ -2,7 +2,9 @@ import React from 'react'
 import { convertUserToUnix } from '../../calculations/timeConversions.js'
 import { connect } from 'react-redux'
 import { Form } from 'semantic-ui-react'
-import { statusOptions } from './projectFunctions'
+import { statusOptions, fetchAssignContactsToProject } from './projectFunctions'
+import ContactAssignInput from '../contacts/ContactAssignInput.js'
+
 
 class NewProject extends React.Component {
 
@@ -19,7 +21,8 @@ class NewProject extends React.Component {
         e_hour: '',
         e_minute: '',
         sub_needs: '',
-        status: ''
+        status: '',
+        checkedContacts: []
     }
 
     
@@ -61,17 +64,39 @@ class NewProject extends React.Component {
             }
         })
         .then(project => {
+            const contactObj = {
+                checkedContacts: this.state.checkedContacts, 
+                job_id: this.props.currentJob.id
+            }
+            fetchAssignContactsToProject(contactObj, project.id)
+            this.props.updateUsers(this.props.currentJob.id)
             this.props.setView(project)
         })
         .catch(error => console.error(error))
     }
 
-    componentDidMount(){
-        //TODO after you establish user friends,
-        //fetch users connected to currentUser
-        //this.setState({ users: []})
-        //create checkbox/text search in form to add subcontractors
-        //set subcontractor permision level 2
+    handleContactChange = (e, { value }) => { //TODO: refactor by adding this wherever the other handleContactChange functions go
+        const arr = value.split(' ')
+        const permiss = arr[0]
+        const u_id = arr[1]
+        const updCheckedContacts = [...this.state.checkedContacts]
+        const i = updCheckedContacts.findIndex(obj => {
+            return obj.user_id === u_id
+        })
+        const newContact = {user_id: u_id, permission: permiss}
+            if( i < 0 ) {
+                updCheckedContacts.push(newContact)
+            } else {
+                if(permiss === '4') {
+                    updCheckedContacts.splice(i, 1)
+                } else {
+                    updCheckedContacts[i] = newContact
+                }
+            }
+            this.setState({
+                ...this.state,
+                checkedContacts: updCheckedContacts
+            })
     }
 
     render() {
@@ -106,6 +131,18 @@ class NewProject extends React.Component {
                         options={statusOptions}
                         onChange={this.handleDropdown}
                     /><br/><br/>
+                    { this.props.contacts.length > 0 ?
+                    <>
+                    <h2>Add Users to This Job </h2>
+                    {this.props.contacts.map(contact => 
+                        <ContactAssignInput 
+                        contact={contact} 
+                        handleChange={this.handleContactChange} 
+                        checkedContacts={this.state.checkedContacts}
+                        />)}
+                    
+                    </>
+                    : null}
                     <Form.Input type='submit' value='Create Project' />
                 </Form>
             </div>
@@ -116,7 +153,8 @@ class NewProject extends React.Component {
 const mapStateToProps = state =>{
     return {
         currentUser: state.currentUser,
-        currentJob: state.currentJob
+        currentJob: state.currentJob,
+        contacts: state.contacts
     }
 }
 

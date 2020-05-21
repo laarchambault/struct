@@ -2,7 +2,6 @@ class UserJobsController < ApplicationController
 
     def job_contacts
         job_id = params[:id]
-        byebug
         params[:checkedContacts].map do |obj|
             uj = UserJob.find_by(user_id: obj[:'user_id'], job_id: job_id)
             if uj

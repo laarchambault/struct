@@ -15,6 +15,7 @@ Rails.application.routes.draw do
 
   get '/jobs/:id/projects', to: 'jobs#projects'
   post '/jobs/:id/contacts', to: 'user_jobs#job_contacts'
+  post '/projects/:id/contacts', to: 'user_projects#project_contacts'
 
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html

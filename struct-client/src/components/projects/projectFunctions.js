@@ -102,3 +102,21 @@ export const returnEditStateFromProject = project => {
         status: project.status
     }
 }
+
+export const fetchAssignContactsToProject = (contactObj, project_id) => {
+    fetch(`http://localhost:3000/projects/${project_id}/contacts`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(contactObj)
+    })
+    .then(r => {
+        if(r.ok) {
+            return r.json()
+        } else {
+            throw r
+        }
+    })
+}

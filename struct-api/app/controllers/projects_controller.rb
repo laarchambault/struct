@@ -5,7 +5,7 @@ class ProjectsController < ApplicationController
         user_id = session[:user_id]
         job_id = params[:job_id]
         users_projects_with_permission = {}
-        #get hash of projects belonging to jobs current user owns
+        #get hash of projects belonging to current job if current user has builder privilege
         u_job = UserJob.find_by(user_id: user_id, job_id: job_id, permission: 1)
         if u_job
             u_job.job.projects.each do |project|
@@ -15,8 +15,13 @@ class ProjectsController < ApplicationController
 
         #get hash of user's user_projects
         u_projects = UserProject.where(user_id: user_id)
-        u_j_projects = u_projects.select { |project| project.job.id === job_id }
-        u_j_projects.each { |up| users_projects_with_permission[up.id] = up.permission}
+        if u_projects.length > 0
+            user_projects_for_this_job = u_projects.select { |user_project| user_project.job.id === job_id }
+            user_projects_for_this_job.each { |up| 
+                #find the userjob where user === project job
+                this_projects_user_job = UserJob.find_by(job_id: up.project.job.id, user_id: user_id)
+                users_projects_with_permission[up.project.id] = this_projects_user_job.permission}    
+        end
         #return hash with (project_id: permission) pairs for all projects belonging to user
         render json: users_projects_with_permission
     end

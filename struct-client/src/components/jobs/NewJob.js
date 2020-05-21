@@ -76,8 +76,18 @@ class NewJob extends Component {
                         State:
                         <input type='text' value={this.state.state} name="state" onChange={this.handleChange}/>
                     </label><br/>
+                    { this.props.contacts.length > 0 ?
+                    <>
                     <h2>Add Users to This Job </h2>
-                    {this.props.contacts.map(contact => <ContactAssignInput contact={contact} handleChange={this.handleContactChange} checkedContacts={this.state.checkedContacts}/>)}
+                    {this.props.contacts.map(contact => 
+                        <ContactAssignInput 
+                        contact={contact} 
+                        handleChange={this.handleContactChange} 
+                        checkedContacts={this.state.checkedContacts}
+                        />)}
+                    
+                    </>
+                    : null}
                     <input type='submit'/>
                 </form>
             </div>
