@@ -123,7 +123,12 @@ class ProjectWindow extends React.Component {
                         updateUsers={this.fetchUserProjectsAndSetState}
                         /> 
                 : this.state.view === 'edit' ?
-                        <EditProject project={this.currentProject()} permission={this.state.userProjects[this.currentProject().id]} setView={this.setViewFromEdit}/>
+                        <EditProject 
+                            project={this.currentProject()} 
+                            permission={this.state.userProjects[this.currentProject().id]} 
+                            setView={this.setViewFromEdit}
+                            updateUsers={this.fetchUserProjectsAndSetState}
+                            />
                         :
                         this.state.view === 'show' ?
                             <ShowProject 
