@@ -51,7 +51,7 @@ class SignupForm extends Component {
         
 
     }
-
+    
     render() {
         return(
             <form onSubmit={this.handleSubmit}>
@@ -90,7 +90,7 @@ class SignupForm extends Component {
 
 const mapDispatchToProps = dispatch => {
     return {
-        submitSignup: id => dispatch({type: 'SIGNUP', id })
+        submitSignup: id => dispatch({type: 'SET_USER', id })
     }
 }
 

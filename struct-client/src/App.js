@@ -6,8 +6,11 @@ import ProjectsContainer from './components/projects/ProjectsContainer'
 import EditJobForm from './components/jobs/EditJobForm'
 import { connect } from 'react-redux'
 import { Route, Switch, withRouter } from "react-router-dom";
-
+import EditUser from './components/login/EditUser'
 import './App.css';
+import ContactWindow from './components/contacts/ContactWindow';
+import { fetchContactsAndSetState } from './components/contacts/contactHelpers'
+
 
 
 
@@ -25,6 +28,7 @@ class App extends React.Component {
     })
     .then(user =>{
       this.props.addUser(user.id)
+      fetchContactsAndSetState(this.props.addContacts)
       this.props.history.push('/jobs')
     })
     .catch(console.error)
@@ -43,10 +47,17 @@ class App extends React.Component {
                   <Route exact path='/jobs/:id/edit' render={routeProps => <EditJobForm {...routeProps} />} />
                   <Route exact path='/jobs/:id' render={ routeProps => <ProjectsContainer {...routeProps} /> } />
                   <Route exact path='/jobs' component={JobsContainer} />
+                  <Route exact path='/contacts' component={ContactWindow} />
+                  <Route exact path='/editProfile' component={EditUser} />
+
                   </> 
                 :
                   this.props.currentUser ?
+                    <>
                     <Route exact path='/jobs' component={JobsContainer } />
+                    <Route exact path='/editProfile' component={EditUser} />
+                    <Route exact path='/contacts' component={ContactWindow} />
+                    </>
                     :
                     null
               }
@@ -65,7 +76,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    addUser: id => dispatch({type: 'LOGIN', id: id})
+    addUser: id => dispatch({type: 'SET_USER', id: id}),
+    addContacts: contacts => dispatch({type: 'SET_CONTACTS', contacts})
   }
 }
 

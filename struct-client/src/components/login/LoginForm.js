@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { fetchContactsAndSetState } from '../contacts/contactHelpers'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
@@ -35,6 +36,7 @@ class LoginForm extends Component {
         })
         .then(data => {
             this.props.submitLogin(data.id)
+            fetchContactsAndSetState(this.props.addContacts)
             this.props.history.push('/jobs')
 
         })
@@ -58,7 +60,8 @@ class LoginForm extends Component {
 
 const mapDispatchToProps = dispatch => {
     return {
-        submitLogin: id => dispatch({type: 'LOGIN', id })
+        submitLogin: id => dispatch({type: 'SET_USER', id }),
+        addContacts: contacts => dispatch({type: 'SET_CONTACTS', contacts})
     }
 }
 

@@ -1,12 +1,11 @@
 export default function reducer(state={
     currentUser: null,
     jobs: [],
-    currentJob: null
+    currentJob: null,
+    contacts: []
 }, action) {
     switch(action.type) {
-        case 'LOGIN':
-            return {...state, currentUser: action.id};
-        case 'SIGNUP':
+        case 'SET_USER':
             return {...state, currentUser: action.id};
         case 'LOGOUT':
             return {...state, currentUser: null};
@@ -14,6 +13,8 @@ export default function reducer(state={
             return {...state, jobs: action.jobs};
         case 'SET_JOB':
             return {...state, currentJob: action.job};
+        case 'SET_CONTACTS':
+            return {...state, contacts: action.contacts};
         default:
             return state
     }

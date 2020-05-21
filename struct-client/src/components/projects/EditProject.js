@@ -76,25 +76,102 @@ class EditProject extends React.Component {
     }
 
     render() {
+        let {permission} = this.props
         return(
             <div>
                 <h1>Create New Project</h1>
                 <Form onSubmit={this.handleSubmit}>
-                    <Form.Input label='Title ' value={this.state.name} name="name" onChange={this.handleChange} />
+                    <Form.Input 
+                        label='Title ' 
+                        value={this.state.name} 
+                        name="name" 
+                        onChange={this.handleChange} 
+                        disabled={ permission === 1 ? false : true}
+                        />
                     
                     <h2>Project Start Time</h2>
-                    <Form.Input label='Month (MO) ' type='integer' value={this.state.s_month} name="s_month" onChange={this.handleChange} /><br/>
-                    <Form.Input label='Day (DD) ' type='integer' value={this.state.s_day} name="s_day" onChange={this.handleChange} /><br/>
-                    <Form.Input label='Hour (HH) ' type='integer' value={this.state.s_hour} name="s_hour" onChange={this.handleChange} /><br/>
-                    <Form.Input label='Minute (MM) ' type='integer' value={this.state.s_minute} name="s_minute" onChange={this.handleChange} /><br/>
-                    <Form.Input label='Year (YYYY) ' type='integer' value={this.state.s_year} name="s_year" onChange={this.handleChange} /><br/>
+                    <Form.Input 
+                        label='Month (MO) ' 
+                        type='integer' 
+                        value={this.state.s_month} 
+                        name="s_month" 
+                        onChange={this.handleChange} 
+                        disabled={ permission === 1 ? false : true}
+                        /><br/>
+                    <Form.Input 
+                        label='Day (DD) ' 
+                        type='integer' 
+                        value={this.state.s_day} 
+                        name="s_day" 
+                        onChange={this.handleChange} 
+                        disabled={ permission === 1 ? false : true}
+                        /><br/>
+                    <Form.Input 
+                        label='Hour (HH) ' 
+                        type='integer' 
+                        value={this.state.s_hour} 
+                        name="s_hour" 
+                        onChange={this.handleChange} 
+                        disabled={ permission === 1 ? false : true}
+                        /><br/>
+                    <Form.Input 
+                        label='Minute (MM) ' 
+                        type='integer' 
+                        value={this.state.s_minute} 
+                        name="s_minute" 
+                        onChange={this.handleChange} 
+                        disabled={ permission === 1 ? false : true}
+                        /><br/>
+                    <Form.Input 
+                        label='Year (YYYY) ' 
+                        type='integer' 
+                        value={this.state.s_year} 
+                        name="s_year" 
+                        onChange={this.handleChange} 
+                        disabled={ permission === 1 ? false : true}
+                        /><br/>
                     
                     <h2>Project End Time</h2>
-                    <Form.Input label='Month (MO) ' type='integer' value={this.state.e_month} name="e_month" onChange={this.handleChange} /><br/>
-                    <Form.Input label='Day (DD) ' type='integer' value={this.state.e_day} name="e_day" onChange={this.handleChange} /><br/>
-                    <Form.Input label='Hour (HH) ' type='integer' value={this.state.e_hour} name="e_hour" onChange={this.handleChange} /><br/>
-                    <Form.Input label='Minute (MM) ' type='integer' value={this.state.e_minute} name="e_minute" onChange={this.handleChange} /><br/>
-                    <Form.Input label='Year (YYYY) ' type='integer' value={this.state.e_year} name="e_year" onChange={this.handleChange} /><br/>
+                    <Form.Input 
+                        label='Month (MO) ' 
+                        type='integer' 
+                        value={this.state.e_month} 
+                        name="e_month" 
+                        onChange={this.handleChange} 
+                        disabled={ permission === 1 ? false : true}
+                        /><br/>
+                    <Form.Input 
+                        label='Day (DD) ' 
+                        type='integer' 
+                        value={this.state.e_day} 
+                        name="e_day" 
+                        onChange={this.handleChange} 
+                        disabled={ permission === 1 ? false : true}
+                        /><br/>
+                    <Form.Input 
+                        label='Hour (HH) ' 
+                        type='integer' 
+                        value={this.state.e_hour} 
+                        name="e_hour" 
+                        onChange={this.handleChange} 
+                        disabled={ permission === 1 ? false : true}
+                        /><br/>
+                    <Form.Input 
+                        label='Minute (MM) ' 
+                        type='integer' 
+                        value={this.state.e_minute} 
+                        name="e_minute" 
+                        onChange={this.handleChange} 
+                        disabled={ permission === 1 ? false : true}
+                        /><br/>
+                    <Form.Input 
+                        label='Year (YYYY) ' 
+                        type='integer' 
+                        value={this.state.e_year} 
+                        name="e_year" 
+                        onChange={this.handleChange} 
+                        disabled={ permission === 1 ? false : true}
+                        /><br/>
 
                     <h2> Subcontractor Requirements (optional) </h2>
                     <Form.Input value={this.state.sub_needs} name='sub_needs' onChange={this.handleChange} /><br/>

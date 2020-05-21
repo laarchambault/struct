@@ -1,7 +1,7 @@
 class JobsController < ApplicationController
 
     def create
-        job = Job.create(name: params[:name], street_address: params[:street_address], city: params[:city], state: params[:state])
+        job = Job.create(job_params)
         user = User.find_by(id: session[:user_id])
         if user && job.valid?
             user_job = UserJob.create(user_id: user.id, job_id: job.id, permission: params[:permission])
@@ -13,12 +13,9 @@ class JobsController < ApplicationController
 
     def update
         job = Job.find_by(id: params[:id])
-        job.name = params[:name]
-        job.street_address = params[:street_address]
-        job.city = params[:city]
-        job.state = params[:state]
+        job.update(job_params)
 
-        if job.save
+        if job.valid?
             render json: job
         else
             render json: {error: "unable to update"}, status: :bad_request
@@ -35,6 +32,11 @@ class JobsController < ApplicationController
         else
             render json: {error: "Unable to fetch projects"}, status: :not_found
         end
+    end
+
+    private
+    def job_params
+        params.require(:job).permit(:name, :street_address, :city, :state)
     end
 
 end

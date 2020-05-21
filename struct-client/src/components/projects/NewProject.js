@@ -63,7 +63,7 @@ class NewProject extends React.Component {
         .then(project => {
             this.props.setView(project)
         })
-        .catch(error => alert(error))
+        .catch(error => console.error(error))
     }
 
     componentDidMount(){

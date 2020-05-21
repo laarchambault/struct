@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
+import { Button } from 'semantic-ui-react'
 
 class NavBar extends Component {
 
@@ -20,11 +21,23 @@ class NavBar extends Component {
     render() {
         return(
             <div>
-                <h1>Hello from Navbar</h1>
-                <button onClick={this.handleLogout}>Log Out</button>
+                {this.props.currentUser ? 
+                    <>
+                    <Button onClick={() => this.props.history.push('/editProfile')}>Profile</Button>
+                    <Button onClick={this.handleLogout}>Log Out</Button>
+                    <Button onClick={() => this.props.history.push('/contacts')}>Contacts</Button>
+                    </>
+                    :
+                    null}
             </div>
             
         )
+    }
+}
+
+const mapStateToProps = state => {
+    return {
+        currentUser: state.currentUser
     }
 }
 
@@ -34,4 +47,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default withRouter(connect(null, mapDispatchToProps)(NavBar))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NavBar))

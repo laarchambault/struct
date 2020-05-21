@@ -4,7 +4,8 @@ class UsersController < ApplicationController
     skip_before_action :authorized, only: [:create, :login]
 
     def create
-        user = User.create(f_name: params[:f_name], l_name: params[:l_name], email: params[:email], phone: params[:phone], company: params[:company], company_phone: params[:company_phone], company_email: params[:company_email], password: params[:password])
+
+        user = User.create(user_params)
         
         if user.valid?
             session[:user_id] = user.id 
@@ -43,9 +44,20 @@ class UsersController < ApplicationController
         render json: { message: "Logged out" }
     end
 
-    # def key
-    #     key = ENV['S3_BUCKET']
-    #     render json: {key: key}
-    # end
+    def update
+        user = User.find_by(id: params[:id])
+
+        user.update(user_params)
+        if user
+            render json: user
+        else
+            render json: {error: "Unable to update user"}, status: :bad_request
+        end
+    end
+
+    private
+    def user_params
+        params.require(:user).permit(:f_name, :l_name, :password, :email, :phone, :company, :company_phone, :company_email)
+    end
 
 end

@@ -16,7 +16,6 @@ class ProjectsContainer extends Component {
         return(
             <div>
                 <Button onClick={this.backToJobs}>Back to All Jobs</Button>
-                Hello from Projects Container
                 <NavLink to={`/jobs/${this.props.match.params.id}/edit`}><Button>Edit Job Details</Button></NavLink>
                 <ProjectWindow />
             </div>

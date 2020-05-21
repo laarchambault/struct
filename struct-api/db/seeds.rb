@@ -37,3 +37,5 @@ end
     UserProject.create(user_id: User.all.sample.id, project_id: Project.all.sample.id)
 end
 
+
+

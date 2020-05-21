@@ -1,5 +1,5 @@
 import React from 'react'
-import { fetchProjects, createProjectItem } from './projectFunctions'
+import { fetchProjects, fetchUserProjects, createProjectItem } from './projectFunctions'
 import ShowProject from './ShowProject'
 import EditProject from './EditProject'
 // import { convertUnixToUser } from '../../calculations/timeConversions'
@@ -15,7 +15,7 @@ import moment from 'moment'
 
 class ProjectWindow extends React.Component {
 
-    state={ projects: [], items: [], view: '', project: ''}
+    state={ projects: [], items: [], view: '', project: '', userProjects: []}
 
     handleDoubleClick = e => {
         const projId = parseInt(e.currentTarget.title, 10)
@@ -49,7 +49,14 @@ class ProjectWindow extends React.Component {
             })
             this.setState({ projects: projects, items: items})
         })
-        .catch(error => console.log(error))
+        .catch(console.error)
+
+        fetchUserProjects(this.props.jobId)
+        .then( projects => {
+            // debugger
+            this.setState({userProjects: projects}) 
+        })
+        .catch(console.error)
     }
 
 
@@ -105,10 +112,10 @@ class ProjectWindow extends React.Component {
                 { this.state.view === 'new' ? 
                     <NewProject setView={this.setViewFromNew}/> 
                 : this.state.view === 'edit' ?
-                        <EditProject project={this.currentProject()} setView={this.setViewFromEdit}/>
+                        <EditProject project={this.currentProject()} permission={this.state.userProjects[this.currentProject().id]} setView={this.setViewFromEdit}/>
                         :
                         this.state.view === 'show' ?
-                            <ShowProject showEdit={this.showEdit} project={this.currentProject()} updateProject={this.updateProject}/>
+                            <ShowProject showEdit={this.showEdit} project={this.currentProject()} permission={this.state.userProjects[this.currentProject().id]}updateProject={this.updateProject}/>
                         : null }
             </div>
         )

@@ -33,57 +33,65 @@ class ShowProject extends React.Component {
 
     }
 
+    
+
     render() {
+        const { permission, showEdit, project, currentJob } = this.props
         return(
             <Grid divided='vertically' > {/*className={come up with something to style the project like a box>}*/} 
-                <Button onClick={this.props.showEdit}>Edit Project Details</Button>
+                { permission === 1 || permission === 2 ?
+                    <Button onClick={showEdit}>Edit Project Details</Button>
+                : null}
                 <Grid.Row columns={2}>
                     <Grid.Column floated='left' textAlign='left'>
-                        <h3>{this.props.currentJob.name}</h3>
+                        <h3>{currentJob.name}</h3>
                     </Grid.Column>
                     <Grid.Column floated='right' textAlign='right'>
-                        <h1>{this.props.project.name}</h1>
+                        <h1>{project.name}</h1>
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row columns={4}>
                     <Grid.Column >
-                        <h3>Project Status: {this.props.project.status}</h3>
+                        <h3>Project Status: {project.status}</h3>
                     </Grid.Column>
                     <Grid.Column >
                         <h3>Weather Data Unavailable</h3>
                     </Grid.Column>
                     <Grid.Column> </Grid.Column>
                     <Grid.Column >
-                        <h1>{convertUnixToUser(this.props.project.start_time) + '  -  ' + convertUnixToUser(this.props.project.end_time)}</h1>
+                        <h1>{convertUnixToUser(project.start_time) + '  -  ' + convertUnixToUser(this.props.project.end_time)}</h1>
                     </Grid.Column>
                 </Grid.Row>
-                <Grid.Row centered>
-                    <Button onClick={this.handleStatusChange}>Not Started</Button>
-                    <Button onClick={this.handleStatusChange}>In Progress</Button>
-                    <Button onClick={this.handleStatusChange}>Ready for Next Project</Button>
-                    <Button onClick={this.handleStatusChange}>Approved</Button><br/>
-                </Grid.Row>
+                { permission === 1 ?
+                    <Grid.Row centered>
+                        <Button onClick={this.handleStatusChange}>Not Started</Button>
+                        <Button onClick={this.handleStatusChange}>In Progress</Button>
+                        <Button onClick={this.handleStatusChange}>Ready for Next Project</Button>
+                        <Button onClick={this.handleStatusChange}>Approved</Button><br/>
+                    </Grid.Row>
+                : null}
                 
-                <Grid.Row columns={1}>
+                { permission === 1 || permission === 2 ?
+                    <Grid.Row columns={1}>
                     <Grid.Column>
                         <Item>
                             <Item.Meta>Will contain subcontractor contact info</Item.Meta>
                         </Item>
                     </Grid.Column>
                 </Grid.Row>
+                : null }
+                
 
                 <Grid.Row columns={1}>
                     <Grid.Column>
                         <Item>
                             <Item.Header>Subcontractor Needs</Item.Header>
-                            <Item.Description>{this.props.project.sub_needs}</Item.Description>
+                            <Item.Description>{project.sub_needs}</Item.Description>
                         </Item>
                     </Grid.Column>
                 </Grid.Row>
 
             </Grid>
-        
-        
         
         
         

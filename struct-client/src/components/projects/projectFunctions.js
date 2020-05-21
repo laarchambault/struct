@@ -12,6 +12,24 @@ export const fetchProjects = jobId => {
         
 }
 
+export const fetchUserProjects = (id) => {
+    return fetch('http://localhost:3000/projects/permission', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            "Content-Type": 'application/json'
+        },
+        body: JSON.stringify({job_id: id})
+    })
+    .then(r => {
+        if(!r.ok) {
+            throw r
+        } else {
+            return r.json()
+        }
+    })
+}
+
 export const createProjectItem  = (project, doubleClickCallback) => {
     return {
         id: project.id,
@@ -26,6 +44,8 @@ export const createProjectItem  = (project, doubleClickCallback) => {
         }
     }
 }
+
+
 
 export const statusOptions = [
     {
