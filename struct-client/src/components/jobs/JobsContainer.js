@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import ViewJobs from './ViewJobs'
 import NewJob from './NewJob'
+import Loading from '../../Loading'
 import { connect } from 'react-redux'
 
 class JobsContainer extends Component {
@@ -9,6 +10,7 @@ class JobsContainer extends Component {
     }
 
     componentDidMount() {
+        this.props.toggleLoad()
         fetch(`http://localhost:3000/users/${this.props.userId}`, {
             credentials: 'include'
         })
@@ -21,6 +23,7 @@ class JobsContainer extends Component {
         })
         .then(user => {
             this.props.updateJobs(user.jobs)
+            this.props.toggleLoad()
         })
     }
 
@@ -36,13 +39,18 @@ class JobsContainer extends Component {
 
     render() {
         return(
-            <div>
-                <button onClick={this.toggleView}>{ this.state.view? "Create Job" : "Return to All Jobs"}</button>
-                { this.state.view ? 
-                    <ViewJobs userId={this.props.userId} jobs={this.props.jobs}/> 
-                : 
-                    <NewJob userId={this.props.userId} addJob={this.addJob}/>}
-            </div>
+            <>
+            {this.props.loading ? <Loading/> :
+                <div>
+                    <button onClick={this.toggleView}>{ this.state.view? "Create Job" : "Return to All Jobs"}</button>
+                    { this.state.view ? 
+                        <ViewJobs userId={this.props.userId} jobs={this.props.jobs}/> 
+                    : 
+                        <NewJob userId={this.props.userId} addJob={this.addJob}/>}
+                </div>
+            }
+            </>
+            
             
         )
 
@@ -52,13 +60,15 @@ class JobsContainer extends Component {
 const mapStateToProps = state => {
     return {
         userId: state.currentUser,
-        jobs: state.jobs
+        jobs: state.jobs,
+        loading: state.loading
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        updateJobs: jobs => dispatch({type: 'UPDATE_JOBS', jobs: jobs})
+        updateJobs: jobs => dispatch({type: 'UPDATE_JOBS', jobs: jobs}),
+        toggleLoad: () => dispatch({type: 'TOGGLE_LOADING'})
     }
 }
 

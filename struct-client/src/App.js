@@ -1,5 +1,6 @@
 import React from 'react';
 import NavBar from './components/NavBar'
+import Loading from './Loading'
 import Login from './components/login/Login'
 import JobsContainer from './components/jobs/JobsContainer'
 import ProjectsContainer from './components/projects/ProjectsContainer'
@@ -12,11 +13,10 @@ import ContactWindow from './components/contacts/ContactWindow';
 import { fetchContactsAndSetState } from './components/contacts/contactHelpers'
 
 
-
-
 class App extends React.Component {
 
   componentDidMount() {
+    this.props.toggleLoad()
     fetch('http://localhost:3000/autologin', {
       credentials: "include"
     })
@@ -29,6 +29,7 @@ class App extends React.Component {
     .then(user =>{
       this.props.addUser(user.id)
       fetchContactsAndSetState(this.props.addContacts)
+      this.props.toggleLoad()
       this.props.history.push('/jobs')
     })
     .catch(console.error)
@@ -36,13 +37,13 @@ class App extends React.Component {
 
 
   render() {
+    const { loading } = this.props
     return (
         <div className="App">
           <NavBar/>
           <Switch>
             <div>
-              {
-                this.props.currentUser && this.props.currentJob ?
+              { this.props.currentUser && this.props.currentJob ?
                   <>
                   <Route exact path='/jobs/:id/edit' render={routeProps => <EditJobForm {...routeProps} />} />
                   <Route exact path='/jobs/:id' render={ routeProps => <ProjectsContainer {...routeProps} /> } />
@@ -61,7 +62,8 @@ class App extends React.Component {
                     :
                     null
               }
-            <Route exact path='/' component={Login }/>
+                <Route exact path='/' component={Login }/> 
+
             </div>
           </Switch>
         </div>
@@ -71,13 +73,17 @@ class App extends React.Component {
 }
 
 const mapStateToProps = state => {
-  return { currentUser: state.currentUser, currentJob: state.currentJob }
+  return { 
+    currentUser: state.currentUser, 
+    currentJob: state.currentJob,
+    loading: state.loading }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     addUser: id => dispatch({type: 'SET_USER', id: id}),
-    addContacts: contacts => dispatch({type: 'SET_CONTACTS', contacts})
+    addContacts: contacts => dispatch({type: 'SET_CONTACTS', contacts}),
+    toggleLoad: () => dispatch({type: 'TOGGLE_LOADING'})
   }
 }
 

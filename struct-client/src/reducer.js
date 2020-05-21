@@ -2,7 +2,8 @@ export default function reducer(state={
     currentUser: null,
     jobs: [],
     currentJob: null,
-    contacts: []
+    contacts: [],
+    loading: false
 }, action) {
     switch(action.type) {
         case 'SET_USER':
@@ -15,6 +16,8 @@ export default function reducer(state={
             return {...state, currentJob: action.job};
         case 'SET_CONTACTS':
             return {...state, contacts: action.contacts};
+        case 'TOGGLE_LOADING':
+            return {...state, loading: !state.loading}
         default:
             return state
     }
