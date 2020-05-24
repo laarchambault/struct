@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import ContactAssignInput from '../contacts/ContactAssignInput.js'
+import JobContactAssignForm from '../contacts/JobContactAssignForm.js'
 
 import { connect } from 'react-redux'
 import { fetchEditJob, fetchAssignContactsToJob } from './fetches.js'
@@ -17,6 +17,22 @@ class EditJobForm extends Component {
         this.setState({ [e.target.name]: e.target.value })
     }
 
+    getContactsForThisJob = jobId => {
+        fetch(`http://localhost:3000/jobs/${this.props.match.params.id}/contacts`, {
+            credentials: 'include'
+        })
+        .then(r => {
+            if(r.ok) {
+                return r.json()
+            } else {
+                throw r
+            }
+        })
+        .then(jobPermissions => {
+            this.setState({checkedContacts: jobPermissions})
+        })
+    }
+
     //below method is duplicated on NewJob.js. TODO: move to fetches.js or new helper file
     handleContactChange = (e, { value }) => {
         const arr = value.split(' ')
@@ -30,11 +46,7 @@ class EditJobForm extends Component {
             if( i < 0 ) {
                 updCheckedContacts.push(newContact)
             } else {
-                if(permiss === '4') {
-                    updCheckedContacts.splice(i, 1)
-                } else {
-                    updCheckedContacts[i] = newContact
-                }
+                updCheckedContacts[i] = newContact
             }
             this.setState({
                 ...this.state,
@@ -69,6 +81,19 @@ class EditJobForm extends Component {
         })
     }
 
+    dropdownValue = (contact_id) => {
+        if (this.state.checkedContacts.length > 0) {
+            const contactObj = this.state.checkedContacts.find( c => c.user_id === contact_id)
+            if (contactObj) {
+                return contactObj.permission + ' ' + contactObj.user_id
+            } else {
+                return `4 ${contact_id}`
+            }
+        } else {
+            return `4 ${contact_id}`
+        }   
+    }
+
 
     render() {
         return(
@@ -92,7 +117,13 @@ class EditJobForm extends Component {
                         <input type='text' value={this.state.state} name="state" onChange={this.handleChange}/>
                     </label><br/>
                     <h2>Add Users to This Job </h2>
-                    {this.props.contacts.map(contact => <ContactAssignInput contact={contact} handleChange={this.handleContactChange} checkedContacts={this.state.checkedContacts}/>)}
+                    {this.props.contacts.map(contact => 
+                        <JobContactAssignForm 
+                            contact={contact} 
+                            handleChange={this.handleContactChange} 
+                            checkedContacts={this.state.checkedContacts}
+                            value={this.dropdownValue(contact.id)}
+                            />)}
                     <input type='submit'/>
                 </form>
             </div>

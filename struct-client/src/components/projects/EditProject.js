@@ -3,7 +3,8 @@ import { convertUserToUnix } from '../../calculations/timeConversions.js'
 import { connect } from 'react-redux'
 import { Form } from 'semantic-ui-react'
 import { statusOptions, returnEditStateFromProject, fetchAssignContactsToProject } from './projectFunctions'
-import ContactAssignInput from '../contacts/ContactAssignInput.js'
+import ProjectContactAssignForm from '../contacts/ProjectContactAssignForm.js'
+import Loading from '../../Loading.js'
 
 
 class EditProject extends React.Component {
@@ -33,6 +34,33 @@ class EditProject extends React.Component {
 
     handleDropdown = e => {
         this.setState({ status: e.target.innerText})
+    }
+
+    getContactsForThisProject = projId => {
+        fetch(`http://localhost:3000/projects/${projId}/contacts`, {
+            credentials: 'include'
+        })
+        .then(r => {
+            if(r.ok) {
+                return r.json()
+            } else {
+                throw r
+            }
+        })
+        .then(projectPermissions => {
+            this.setState({checkedContacts: projectPermissions})
+        })
+    }
+
+    contactsWithLowerOrEqualPermissionThanCurrentUser = () => {
+        //filter checkedContacts by permission greater than current user
+        const lowerChecked = [...this.state.checkedContacts].filter( record => 
+            record.permission <= this.props.project.permission)
+        const idsOnlyLowerChecked = lowerChecked.map(contactObj => contactObj.user_id)
+        //filter contacts by contained in filtered checkedContacts
+        return this.props.contacts.filter(contact => 
+            !idsOnlyLowerChecked.includes(contact.id)
+            )
     }
 
     handleSubmit = e => {
@@ -68,14 +96,17 @@ class EditProject extends React.Component {
                 job_id: this.props.currentJob.id
             }
             fetchAssignContactsToProject(contactObj, project.id)
-            this.props.updateUsers(this.props.currentJob.id)
+            this.props.updateUsers(this.props.currentJob.id, 'show')
             this.props.setView(project)
         })
         .catch(error => console.log(error))
     }
 
     componentDidMount() {
+        this.props.toggleLoad()
         this.setState(returnEditStateFromProject(this.props.project))
+        this.getContactsForThisProject(this.props.project.id)//used to prepopulate edit form with user permissions
+        this.props.toggleLoad()
     }
 
     handleContactChange = (e, { value }) => { //TODO: refactor by adding this wherever the other handleContactChange functions go
@@ -84,17 +115,13 @@ class EditProject extends React.Component {
         const u_id = arr[1]
         const updCheckedContacts = [...this.state.checkedContacts]
         const i = updCheckedContacts.findIndex(obj => {
-            return obj.user_id === u_id
+            return obj.user_id === parseInt(u_id, 10)
         })
-        const newContact = {user_id: u_id, permission: permiss}
+        const newContact = {user_id: parseInt(u_id, 10), permission: parseInt(permiss, 10)}
             if( i < 0 ) {
                 updCheckedContacts.push(newContact)
             } else {
-                if(permiss === '4') {
-                    updCheckedContacts.splice(i, 1)
-                } else {
-                    updCheckedContacts[i] = newContact
-                }
+                updCheckedContacts[i] = newContact
             }
             this.setState({
                 ...this.state,
@@ -102,10 +129,26 @@ class EditProject extends React.Component {
             })
     }
 
+    dropdownValue = (contact_id) => {
+        if (this.state.checkedContacts.length > 0) {
+            const contactObj = this.state.checkedContacts.find( c => c.user_id === contact_id)
+            if (contactObj) {
+                return contactObj.permission + ' ' + contactObj.user_id
+            } else {
+                return `4 ${contact_id}`
+            }
+        } else {
+            return `4 ${contact_id}`
+        }
+    }
+
     render() {
-        let {permission} = this.props
+        let {permission} = this.props.currentJob
+        let project_permission = this.props.project.permission
         return(
-            <div>
+            <>
+            {this.props.loading ? <Loading/> :
+                <div>
                 <h1>Edit Project</h1>
                 <Form onSubmit={this.handleSubmit}>
                     <Form.Input 
@@ -123,7 +166,7 @@ class EditProject extends React.Component {
                         value={this.state.s_month} 
                         name="s_month" 
                         onChange={this.handleChange} 
-                        disabled={ permission === 1 ? false : true}
+                        disabled={ permission === 1 || permission === 2 ? false : true}
                         /><br/>
                     <Form.Input 
                         label='Day (DD) ' 
@@ -131,7 +174,7 @@ class EditProject extends React.Component {
                         value={this.state.s_day} 
                         name="s_day" 
                         onChange={this.handleChange} 
-                        disabled={ permission === 1 ? false : true}
+                        disabled={ permission === 1 || permission === 2 ? false : true}
                         /><br/>
                     <Form.Input 
                         label='Hour (HH) ' 
@@ -139,7 +182,7 @@ class EditProject extends React.Component {
                         value={this.state.s_hour} 
                         name="s_hour" 
                         onChange={this.handleChange} 
-                        disabled={ permission === 1 ? false : true}
+                        disabled={ permission === 1 || permission === 2 ? false : true}
                         /><br/>
                     <Form.Input 
                         label='Minute (MM) ' 
@@ -147,7 +190,7 @@ class EditProject extends React.Component {
                         value={this.state.s_minute} 
                         name="s_minute" 
                         onChange={this.handleChange} 
-                        disabled={ permission === 1 ? false : true}
+                        disabled={ permission === 1 || permission === 2 ? false : true}
                         /><br/>
                     <Form.Input 
                         label='Year (YYYY) ' 
@@ -155,7 +198,7 @@ class EditProject extends React.Component {
                         value={this.state.s_year} 
                         name="s_year" 
                         onChange={this.handleChange} 
-                        disabled={ permission === 1 ? false : true}
+                        disabled={ permission === 1 || permission === 2 ? false : true}
                         /><br/>
                     
                     <h2>Project End Time</h2>
@@ -165,7 +208,7 @@ class EditProject extends React.Component {
                         value={this.state.e_month} 
                         name="e_month" 
                         onChange={this.handleChange} 
-                        disabled={ permission === 1 ? false : true}
+                        disabled={ permission === 1 || permission === 2 ? false : true}
                         /><br/>
                     <Form.Input 
                         label='Day (DD) ' 
@@ -173,7 +216,7 @@ class EditProject extends React.Component {
                         value={this.state.e_day} 
                         name="e_day" 
                         onChange={this.handleChange} 
-                        disabled={ permission === 1 ? false : true}
+                        disabled={ permission === 1 || permission === 2 ? false : true}
                         /><br/>
                     <Form.Input 
                         label='Hour (HH) ' 
@@ -181,7 +224,7 @@ class EditProject extends React.Component {
                         value={this.state.e_hour} 
                         name="e_hour" 
                         onChange={this.handleChange} 
-                        disabled={ permission === 1 ? false : true}
+                        disabled={ permission === 1 || permission === 2 ? false : true}
                         /><br/>
                     <Form.Input 
                         label='Minute (MM) ' 
@@ -189,7 +232,7 @@ class EditProject extends React.Component {
                         value={this.state.e_minute} 
                         name="e_minute" 
                         onChange={this.handleChange} 
-                        disabled={ permission === 1 ? false : true}
+                        disabled={ permission === 1 || permission === 2 ? false : true}
                         /><br/>
                     <Form.Input 
                         label='Year (YYYY) ' 
@@ -197,7 +240,7 @@ class EditProject extends React.Component {
                         value={this.state.e_year} 
                         name="e_year" 
                         onChange={this.handleChange} 
-                        disabled={ permission === 1 ? false : true}
+                        disabled={ permission === 1 || permission === 2 ? false : true}
                         /><br/>
 
                     <h2> Subcontractor Requirements (optional) </h2>
@@ -210,22 +253,27 @@ class EditProject extends React.Component {
                         seletion='true'
                         options={statusOptions}
                         onChange={this.handleDropdown}
+                        disabled={ permission === 1 || permission === 2 ? false : true}
                     /><br/><br/>
-                    { this.props.contacts.length > 0 ?
-                    <>
-                    <h2>Add Users to This Job </h2>
-                    {this.props.contacts.map(contact => 
-                        <ContactAssignInput 
-                        contact={contact} 
-                        handleChange={this.handleContactChange} 
-                        checkedContacts={this.state.checkedContacts}
-                        />)}
-                    
-                    </>
+                    {this.contactsWithLowerOrEqualPermissionThanCurrentUser().length > 0 ?
+                        <>
+                        <h2>Add Users to This Project </h2>
+                        {this.contactsWithLowerOrEqualPermissionThanCurrentUser().map(contact => 
+                            <ProjectContactAssignForm 
+                            contact={contact}
+                            permission={project_permission}
+                            handleChange={this.handleContactChange} 
+                            checkedContacts={this.state.checkedContacts}
+                            value={this.dropdownValue(contact.id)}
+                            />)}
+                        
+                        </>
                     : null}
                     <Form.Input type='submit' value='Update' />
                 </Form>
             </div>
+            }
+            </>
         )
     }
 }
@@ -234,8 +282,15 @@ const mapStateToProps = state =>{
     return {
         currentUser: state.currentUser,
         currentJob: state.currentJob,
-        contacts: state.contacts
+        contacts: state.contacts,
+        loading: state.loading
     }
 }
 
-export default connect(mapStateToProps)(EditProject)
+const mapDispatchToProps = dispatch => {
+    return {
+        toggleLoad: () => dispatch({type: 'TOGGLE_LOADING'})
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditProject)

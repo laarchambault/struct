@@ -44,7 +44,21 @@ export const createProjectItem  = (project, doubleClickCallback) => {
         }
     }
 }
-
+//used in ProjectWindow to create items on Timeline component
+export const groups = [{ id: 1, title: '',
+stackItems: true }]
+//used in ProjectWindow to create items on Timeline component(config)
+export const keys = {
+groupIdKey: 'id',
+groupTitleKey: 'title',
+groupRightTitleKey: 'rightTitle',
+itemIdKey: 'id',
+itemTitleKey: 'title',
+itemDivTitleKey: 'id',
+itemGroupKey: 'group',
+itemTimeStartKey: 'start_time',
+itemTimeEndKey: 'end_time',
+}
 
 
 export const statusOptions = [
@@ -103,14 +117,32 @@ export const returnEditStateFromProject = project => {
     }
 }
 
+export const updateItemList = (itemsList, newItem, project_id) => {
+    let i = itemsList.findIndex(item => item.id === project_id)
+    return [...itemsList.slice(0, i), newItem, ...itemsList.slice(i + 1)]
+}
+
 export const fetchAssignContactsToProject = (contactObj, project_id) => {
-    fetch(`http://localhost:3000/projects/${project_id}/contacts`, {
+    return fetch(`http://localhost:3000/projects/${project_id}/contacts`, {
         method: 'POST',
         credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(contactObj)
+    })
+    .then(r => {
+        if(r.ok) {
+            return r.json()
+        } else {
+            throw r
+        }
+    })
+}
+
+export const getSubcontractorsForProject = (projectId) => {
+    return fetch(`http://localhost:3000/projects/${projectId}/subcontractors`, {
+        credentials: 'include'
     })
     .then(r => {
         if(r.ok) {

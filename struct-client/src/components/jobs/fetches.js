@@ -36,7 +36,6 @@ export const fetchEditJob = (id, bodyObj) => {
 }
 
 export const fetchAssignContactsToJob = (contactObj, job_id) => {
-    debugger
     fetch(`http://localhost:3000/jobs/${job_id}/contacts`, {
         method: 'POST',
         credentials: 'include',

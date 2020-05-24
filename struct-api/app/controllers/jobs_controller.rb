@@ -26,9 +26,21 @@ class JobsController < ApplicationController
     def projects
         job = Job.find_by(id: params[:id])
 
-        if job
+        if job 
             projects = job.projects
-            render json: projects
+            projects_with_permissions = []
+            projects.each do |project|
+                user_project = UserProject.find_by(user_id: session[:user_id], project_id: project.id)
+                copy_project = project.as_json
+                if user_project
+                    copy_project["permission"] = user_project.permission
+                    projects_with_permissions.push(copy_project)
+                else
+                    copy_project["permission"] = nil
+                    projects_with_permissions.push(copy_project)
+                end
+            end
+            render json: projects_with_permissions
         else
             render json: {error: "Unable to fetch projects"}, status: :not_found
         end

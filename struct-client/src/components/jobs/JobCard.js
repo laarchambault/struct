@@ -13,7 +13,6 @@ class JobCard extends Component {
 
     render() {
         return(
-            // <Link to={`/jobs/${this.props.job.id}`}>
             <Card onClick={this.handleClick}>
                 <Card.Content>
                     <Card.Header>{this.props.job.name}</Card.Header>
@@ -24,7 +23,6 @@ class JobCard extends Component {
                     </Card.Description>
                 </Card.Content>
             </Card>
-            // </Link>
         )
     }
 }

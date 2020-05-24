@@ -1,8 +1,8 @@
 class ContactsController < ApplicationController
     def index
         user = User.find_by(id: session[:user_id])
-        app_contacts = get_users(user, 'approved')
-        req_contacts = get_users(user, 'request')
+        app_contacts = user.get_users('approved')
+        req_contacts = user.get_users('request')
         render json: {approved_contacts: app_contacts, request_contacts: req_contacts}
     end
 
@@ -67,21 +67,5 @@ class ContactsController < ApplicationController
 
     end
 
-    private
-    def get_users(user, approved_or_request)
-        if approved_or_request == 'approved'
-            status = 1
-            contactees_in_join_table = Contact.where(contacter_id: user.id, status: status)
-            contacters_in_join_table = Contact.where(contactee_id: user.id, status: status)
-            contactees = contactees_in_join_table.map { |c| User.find_by(id: c.contactee_id)}
-            contacters = contacters_in_join_table.map { |c| User.find_by(id: c.contacter_id)}
-            final = contactees.concat(contacters)
-        else
-            status = 0 
-            contacters_in_join_table = Contact.where(contactee_id: user.id, status: status)
-            contacters = contacters_in_join_table.map { |c| User.find_by(id: c.contacter_id)}
-            final = contacters
-        end
-        return final
-    end
+
 end

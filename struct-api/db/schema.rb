@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_18_154928) do
+ActiveRecord::Schema.define(version: 2020_05_21_232527) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,15 +42,6 @@ ActiveRecord::Schema.define(version: 2020_05_18_154928) do
     t.integer "status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "documents", force: :cascade do |t|
-    t.string "title"
-    t.string "notes"
-    t.bigint "job_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["job_id"], name: "index_documents_on_job_id"
   end
 
   create_table "jobs", force: :cascade do |t|
@@ -88,6 +79,7 @@ ActiveRecord::Schema.define(version: 2020_05_18_154928) do
     t.bigint "project_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "permission"
     t.index ["project_id"], name: "index_user_projects_on_project_id"
     t.index ["user_id"], name: "index_user_projects_on_user_id"
   end
@@ -106,7 +98,6 @@ ActiveRecord::Schema.define(version: 2020_05_18_154928) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "documents", "jobs"
   add_foreign_key "user_jobs", "jobs"
   add_foreign_key "user_jobs", "users"
   add_foreign_key "user_projects", "projects"

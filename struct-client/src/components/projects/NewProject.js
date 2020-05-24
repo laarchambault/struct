@@ -1,9 +1,10 @@
 import React from 'react'
 import { convertUserToUnix } from '../../calculations/timeConversions.js'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 import { Form } from 'semantic-ui-react'
 import { statusOptions, fetchAssignContactsToProject } from './projectFunctions'
-import ContactAssignInput from '../contacts/ContactAssignInput.js'
+import ProjectContactAssignForm from '../contacts/ProjectContactAssignForm.js'
 
 
 class NewProject extends React.Component {
@@ -39,7 +40,6 @@ class NewProject extends React.Component {
         e.preventDefault()
         const startUnix = convertUserToUnix('start', this.state)
         const endUnix = convertUserToUnix('end', this.state)
-        console.log(startUnix, endUnix)
         const bodyObj = {
             name: this.state.name,
             start_time: startUnix,
@@ -69,8 +69,12 @@ class NewProject extends React.Component {
                 job_id: this.props.currentJob.id
             }
             fetchAssignContactsToProject(contactObj, project.id)
-            this.props.updateUsers(this.props.currentJob.id)
-            this.props.setView(project)
+            .then( () => {
+                this.props.updateState(project)
+                this.props.updateUsers(this.props.currentJob.id, 'show')
+            })
+            
+
         })
         .catch(error => console.error(error))
     }
@@ -81,22 +85,32 @@ class NewProject extends React.Component {
         const u_id = arr[1]
         const updCheckedContacts = [...this.state.checkedContacts]
         const i = updCheckedContacts.findIndex(obj => {
-            return obj.user_id === u_id
+            return obj.user_id === parseInt(u_id, 10)
         })
-        const newContact = {user_id: u_id, permission: permiss}
+        const newContact = {user_id: parseInt(u_id, 10), permission: parseInt(permiss, 10)}
             if( i < 0 ) {
                 updCheckedContacts.push(newContact)
             } else {
-                if(permiss === '4') {
-                    updCheckedContacts.splice(i, 1)
-                } else {
-                    updCheckedContacts[i] = newContact
-                }
+                updCheckedContacts[i] = newContact
             }
             this.setState({
                 ...this.state,
                 checkedContacts: updCheckedContacts
             })
+    }
+
+    dropdownValue = (contact_id) => {
+        if (this.state.checkedContacts.length > 0) {
+            const contactObj = this.state.checkedContacts.find( c => c.user_id === contact_id)
+            if (contactObj) {
+                return contactObj.permission + ' ' + contactObj.user_id
+            } else {
+                return `4 ${contact_id}`
+            }
+        } else {
+            return `4 ${contact_id}`
+        }
+        
     }
 
     render() {
@@ -200,10 +214,11 @@ class NewProject extends React.Component {
                     <>
                     <h2>Add Users to This Job </h2>
                     {this.props.contacts.map(contact => 
-                        <ContactAssignInput 
+                        <ProjectContactAssignForm 
                         contact={contact} 
                         handleChange={this.handleContactChange} 
                         checkedContacts={this.state.checkedContacts}
+                        value={this.dropdownValue(contact.id)}
                         />)}
                     
                     </>
@@ -223,4 +238,4 @@ const mapStateToProps = state =>{
     }
 }
 
-export default connect(mapStateToProps)(NewProject)
+export default withRouter(connect(mapStateToProps)(NewProject))

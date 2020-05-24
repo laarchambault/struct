@@ -3,10 +3,11 @@ import ViewJobs from './ViewJobs'
 import NewJob from './NewJob'
 import Loading from '../../Loading'
 import { connect } from 'react-redux'
+import { Button } from 'semantic-ui-react'
 
 class JobsContainer extends Component {
     state={
-        view: true,
+        viewAll: true,
     }
 
     componentDidMount() {
@@ -28,13 +29,13 @@ class JobsContainer extends Component {
     }
 
     toggleView = () => {
-        this.setState({ view: !this.state.view})
+        this.setState({ viewAll: !this.state.viewAll})
     }
 
     addJob = job => {
         const newJobs = [...this.props.jobs, job]
         this.props.updateJobs(newJobs)
-        this.setState({view: true})
+        this.setState({viewAll: true})
     }
 
     render() {
@@ -42,8 +43,8 @@ class JobsContainer extends Component {
             <>
             {this.props.loading ? <Loading/> :
                 <div>
-                    <button onClick={this.toggleView}>{ this.state.view? "Create Job" : "Return to All Jobs"}</button>
-                    { this.state.view ? 
+                    <Button onClick={this.toggleView}>{ this.state.viewAll ? "Create Job" : "Return to All Jobs"}</Button>
+                    { this.state.viewAll ? 
                         <ViewJobs userId={this.props.userId} jobs={this.props.jobs}/> 
                     : 
                         <NewJob userId={this.props.userId} addJob={this.addJob}/>}

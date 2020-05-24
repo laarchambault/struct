@@ -1,21 +1,24 @@
 Rails.application.routes.draw do
   get '/approved_contacts', to: 'contacts#approved'
   resources :contacts, only: [:index, :create, :update]
+
   get '/autologin', to: 'users#autologin'
   post '/login', to: 'users#login'
   post '/logout', to: 'users#logout'
-  # resources :user_projects
-  post '/projects/permission', to: 'projects#projects_with_permission'
-  resources :projects, only: [:create, :update, :index]
-  # resources :user_jobs
-  resources :jobs, only: [:create, :update]
-  
   resources :users, only: [:create, :show, :update]
 
+  get '/projects/:id/subcontractors', to: 'projects#show_subcontractors'
+  post '/projects/permission', to: 'projects#projects_with_permission'
+  resources :projects, only: [:create, :update, :index]
 
   get '/jobs/:id/projects', to: 'jobs#projects'
-  post '/jobs/:id/contacts', to: 'user_jobs#job_contacts'
-  post '/projects/:id/contacts', to: 'user_projects#project_contacts'
+  resources :jobs, only: [:create, :update]
+  
+  get '/jobs/:id/contacts', to: 'user_jobs#show_job_contacts'
+  post '/jobs/:id/contacts', to: 'user_jobs#update_job_contacts'
+
+  get '/projects/:id/contacts', to: 'user_projects#show_project_contacts'
+  post '/projects/:id/contacts', to: 'user_projects#update_project_contacts'
 
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html

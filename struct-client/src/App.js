@@ -1,6 +1,5 @@
 import React from 'react';
 import NavBar from './components/NavBar'
-import Loading from './Loading'
 import Login from './components/login/Login'
 import JobsContainer from './components/jobs/JobsContainer'
 import ProjectsContainer from './components/projects/ProjectsContainer'
@@ -37,7 +36,6 @@ class App extends React.Component {
 
 
   render() {
-    const { loading } = this.props
     return (
         <div className="App">
           <NavBar/>
@@ -75,8 +73,7 @@ class App extends React.Component {
 const mapStateToProps = state => {
   return { 
     currentUser: state.currentUser, 
-    currentJob: state.currentJob,
-    loading: state.loading }
+    currentJob: state.currentJob}
 }
 
 const mapDispatchToProps = dispatch => {

@@ -12,11 +12,18 @@ class ProjectsContainer extends Component {
         this.props.history.push('/jobs')
     }
 
+    
+
     render() {
+        const { permission } = this.props.job
         return(
             <div>
                 <Button onClick={this.backToJobs}>Back to All Jobs</Button>
-                <NavLink to={`/jobs/${this.props.match.params.id}/edit`}><Button>Edit Job Details</Button></NavLink>
+                { permission === 1 || permission === 2 ?
+                    <NavLink to={`/jobs/${this.props.match.params.id}/edit`}>
+                        <Button>Edit Job Details</Button>
+                    </NavLink>
+                : null }
                 <ProjectWindow />
             </div>
         )

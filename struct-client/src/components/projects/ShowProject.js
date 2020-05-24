@@ -1,12 +1,13 @@
 import React from 'react'
 import { convertUnixToUser } from '../../calculations/timeConversions'
+import { getSubcontractorsForProject } from './projectFunctions'
 import { connect } from 'react-redux'
-import { Grid, Button, Item } from 'semantic-ui-react'
+import { Grid, Button, Item, Header } from 'semantic-ui-react'
 
 
 class ShowProject extends React.Component {
-
-    //create toggle function to change style of button when active
+    state={ subcontractors: [] }
+    //TODO:create toggle function to change style of button when active
     
     handleStatusChange = e => {
         let projectObj = { ...this.props.project}
@@ -30,16 +31,28 @@ class ShowProject extends React.Component {
             this.props.updateProject(project)
         })
         .catch(error => console.log(error))
-
     }
 
-    
+    componentDidMount = () => {
+        getSubcontractorsForProject(this.props.project.id)
+        .then(subcontractors => {
+            this.setState({subcontractors: subcontractors})
+        })
+    }
+
+    highestPermission = () => {
+        if(this.props.jobPermission > this.props.projectPermission) {
+            return this.props.jobPermission
+        } else {
+            return this.props.projectPermission
+        }
+    }
 
     render() {
-        const { permission, showEdit, project, currentJob } = this.props
+        const { showEdit, project, currentJob } = this.props
         return(
             <Grid divided='vertically' > {/*TODO: className={come up with something to style the project like a box>}*/} 
-                { permission === 1 || permission === 2 ?
+                { this.highestPermission() > 0 && this.highestPermission() < 4 ?
                     <Button onClick={showEdit}>Edit Project Details</Button>
                 : null}
                 <Grid.Row columns={2}>
@@ -62,7 +75,7 @@ class ShowProject extends React.Component {
                         <h1>{convertUnixToUser(project.start_time) + '  -  ' + convertUnixToUser(this.props.project.end_time)}</h1>
                     </Grid.Column>
                 </Grid.Row>
-                { permission === 1 ?
+                { this.highestPermission() === 1 || this.highestPermission() === 2 ?
                     <Grid.Row centered>
                         <Button onClick={this.handleStatusChange}>Not Started</Button>
                         <Button onClick={this.handleStatusChange}>In Progress</Button>
@@ -71,12 +84,24 @@ class ShowProject extends React.Component {
                     </Grid.Row>
                 : null}
     
-                { permission === 1 || permission === 2 ?
+                { this.highestPermission() > 0 && this.highestPermission() < 4 ?
                     <Grid.Row columns={1}>
                     <Grid.Column>
-                        <Item>
-                            <Item.Meta>Will contain subcontractor contact info</Item.Meta>
-                        </Item>
+                        <Header as='h2'>Subcontractors</Header>
+                        { this.state.subcontractors.map(subcontractor => {
+                            return (
+                            <Item>
+                                <Item.Header><strong>{subcontractor.user.f_name} {subcontractor.user.L_name}</strong></Item.Header>
+                                <Item.Meta>{subcontractor.user.phone}</Item.Meta>
+                                <Item.Meta>{subcontractor.user.email}</Item.Meta>
+                                <Item.Header>Company Info</Item.Header>
+                                <Item.Meta><strong>{subcontractor.user.company}</strong></Item.Meta>
+                                <Item.Meta>{subcontractor.user.company_phone}</Item.Meta>
+                                <Item.Meta>{subcontractor.user.company_email}</Item.Meta>
+                            </Item>
+                            )
+                        })}
+                        
                     </Grid.Column>
                 </Grid.Row>
                 : null }
