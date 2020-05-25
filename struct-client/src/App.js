@@ -2,7 +2,7 @@ import React from 'react';
 import NavBar from './components/NavBar'
 import Login from './components/login/Login'
 import JobsContainer from './components/jobs/JobsContainer'
-import ProjectsContainer from './components/projects/ProjectsContainer'
+import ProjectWindow from './components/projects/ProjectWindow'
 import EditJobForm from './components/jobs/EditJobForm'
 import { connect } from 'react-redux'
 import { Route, Switch, withRouter } from "react-router-dom";
@@ -31,7 +31,10 @@ class App extends React.Component {
       this.props.toggleLoad()
       this.props.history.push('/jobs')
     })
-    .catch(console.error)
+    .catch( (error) => {
+      console.error(error)
+      this.props.toggleLoad()
+    })
   }
 
 
@@ -44,7 +47,7 @@ class App extends React.Component {
               { this.props.currentUser && this.props.currentJob ?
                   <>
                   <Route exact path='/jobs/:id/edit' render={routeProps => <EditJobForm {...routeProps} />} />
-                  <Route exact path='/jobs/:id' render={ routeProps => <ProjectsContainer {...routeProps} /> } />
+                  <Route exact path='/jobs/:id' render={ routeProps => <ProjectWindow {...routeProps} /> } />
                   <Route exact path='/jobs' component={JobsContainer} />
                   <Route exact path='/contacts' component={ContactWindow} />
                   <Route exact path='/editProfile' component={EditUser} />

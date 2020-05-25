@@ -6,19 +6,12 @@ import { Button } from 'semantic-ui-react'
 import ProjectWindow from './ProjectWindow'
 
 class ProjectsContainer extends Component {
-
-    backToJobs = () => {
-        this.props.setJob(null)
-        this.props.history.push('/jobs')
-    }
-
-    
+    //TODO: delete this page if not needed
 
     render() {
         const { permission } = this.props.job
         return(
             <div>
-                <Button onClick={this.backToJobs}>Back to All Jobs</Button>
                 { permission === 1 || permission === 2 ?
                     <NavLink to={`/jobs/${this.props.match.params.id}/edit`}>
                         <Button>Edit Job Details</Button>

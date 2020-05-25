@@ -1,6 +1,6 @@
 import React from 'react'
 import { convertUserToUnix } from '../../calculations/timeConversions.js'
-import { connect } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { Form } from 'semantic-ui-react'
 import { statusOptions, fetchAssignContactsToProject } from './projectFunctions'
@@ -27,6 +27,14 @@ class NewProject extends React.Component {
     }
 
     
+    currentUser = useSelector(state => state.currentUser)
+    currentJob = useSelector(state => state.currentJob)
+    contacts = useSelector(state => state.contacts)
+    items = useSelector(state => state.items)
+    currentJobProjects = useSelector(state => state.currentJobProjects)
+    
+    dispatch = useDispatch()
+    
 
     handleChange = e => {
         this.setState({ [e.target.name]: e.target.value })
@@ -46,7 +54,7 @@ class NewProject extends React.Component {
             end_time: endUnix,
             sub_needs: this.state.sub_needs,
             status: this.state.status,
-            job_id: this.props.currentJob.id
+            job_id: this.currentJob.id
         }
         fetch('http://localhost:3000/projects', {
             method: 'POST',
@@ -66,15 +74,13 @@ class NewProject extends React.Component {
         .then(project => {
             const contactObj = {
                 checkedContacts: this.state.checkedContacts, 
-                job_id: this.props.currentJob.id
+                job_id: this.currentJob.id
             }
             fetchAssignContactsToProject(contactObj, project.id)
             .then( () => {
-                this.props.updateState(project)
-                this.props.updateUsers(this.props.currentJob.id, 'show')
+                this.updateState(project)
+                this.props.updateUsers(this.currentJob.id, 'show')
             })
-            
-
         })
         .catch(error => console.error(error))
     }
@@ -210,10 +216,10 @@ class NewProject extends React.Component {
                         options={statusOptions}
                         onChange={this.handleDropdown}
                     /><br/><br/>
-                    { this.props.contacts.length > 0 ?
+                    { this.contacts.length > 0 ?
                     <>
                     <h2>Add Users to This Job </h2>
-                    {this.props.contacts.map(contact => 
+                    {this.contacts.map(contact => 
                         <ProjectContactAssignForm 
                         contact={contact} 
                         handleChange={this.handleContactChange} 
@@ -230,12 +236,4 @@ class NewProject extends React.Component {
     }
 }
 
-const mapStateToProps = state =>{
-    return {
-        currentUser: state.currentUser,
-        currentJob: state.currentJob,
-        contacts: state.contacts
-    }
-}
-
-export default withRouter(connect(mapStateToProps)(NewProject))
+export default withRouter(NewProject)

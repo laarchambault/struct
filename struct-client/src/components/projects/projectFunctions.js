@@ -1,3 +1,9 @@
+
+
+/////////////////////////////////////////////////////////////////
+///////////  FETCHES
+
+//feches all projects for given job
 export const fetchProjects = jobId => {
     return fetch(`http://localhost:3000/jobs/${jobId}/projects`, {
             credentials: "include"
@@ -12,6 +18,8 @@ export const fetchProjects = jobId => {
         
 }
 
+//fetches all projects for this user and this job
+//returns [{user-id: x, permission: y}, ...] format
 export const fetchUserProjects = (id) => {
     return fetch('http://localhost:3000/projects/permission', {
         method: 'POST',
@@ -26,6 +34,39 @@ export const fetchUserProjects = (id) => {
             throw r
         } else {
             return r.json()
+        }
+    })
+}
+
+//given a list of contacts with permissions, creates user_project records & permission level
+//also creates user_job record, if not already exists (no new permission set)
+export const fetchAssignContactsToProject = (contactObj, project_id) => {
+    return fetch(`http://localhost:3000/projects/${project_id}/contacts`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(contactObj)
+    })
+    .then(r => {
+        if(r.ok) {
+            return r.json()
+        } else {
+            throw r
+        }
+    })
+}
+
+export const getSubcontractorsForProject = (projectId) => {
+    return fetch(`http://localhost:3000/projects/${projectId}/subcontractors`, {
+        credentials: 'include'
+    })
+    .then(r => {
+        if(r.ok) {
+            return r.json()
+        } else {
+            throw r
         }
     })
 }
@@ -120,35 +161,4 @@ export const returnEditStateFromProject = project => {
 export const updateItemList = (itemsList, newItem, project_id) => {
     let i = itemsList.findIndex(item => item.id === project_id)
     return [...itemsList.slice(0, i), newItem, ...itemsList.slice(i + 1)]
-}
-
-export const fetchAssignContactsToProject = (contactObj, project_id) => {
-    return fetch(`http://localhost:3000/projects/${project_id}/contacts`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(contactObj)
-    })
-    .then(r => {
-        if(r.ok) {
-            return r.json()
-        } else {
-            throw r
-        }
-    })
-}
-
-export const getSubcontractorsForProject = (projectId) => {
-    return fetch(`http://localhost:3000/projects/${projectId}/subcontractors`, {
-        credentials: 'include'
-    })
-    .then(r => {
-        if(r.ok) {
-            return r.json()
-        } else {
-            throw r
-        }
-    })
 }
