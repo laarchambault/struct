@@ -108,7 +108,9 @@ class ProjectWindow extends React.Component {
             {this.props.loading ? <Loading/> :
                 <div>
                 { this.props.currentJob.permission === 1 || this.props.currentJob.permission === 2 ?
-                <Button onClick={this.handleClick}>New Project</Button>
+                <div className='nav header second'>
+                    <Button className='left' onClick={this.handleClick}>New Project</Button>
+                </div>
                 : null }
                 <Timeline groups={groups} //'groups' and 'keys' are defined in helper functions
                 items={this.props.items}

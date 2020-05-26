@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Dropdown } from 'semantic-ui-react'
+import { Form } from 'semantic-ui-react'
 
 class ContactAssignInput extends Component {
     render() {
@@ -24,15 +24,18 @@ class ContactAssignInput extends Component {
         ]
         return(
             <>
-            <h4>{f_name} {l_name}</h4>
-            <Dropdown
-                placeholder={`Give ${f_name} permission`}
-                fluid
-                selection
-                options={permissionOptions}
-                onChange={handleChange}
-                value={value}
-            />
+            {/* <Form.Field `}> */}
+                <Form.Dropdown
+                    label={`${f_name} ${l_name}`}
+                    placeholder={`Give ${f_name} permission`}
+                    fluid
+                    selection
+                    options={permissionOptions}
+                    onChange={handleChange}
+                    value={value}
+                    />
+            {/* </Form.Field> */}
+            
             </>
             
         )

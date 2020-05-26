@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import JobContactAssignForm from '../contacts/JobContactAssignForm.js'
+import { Form, Button } from 'semantic-ui-react'
 import Loading from '../../Loading'
 import { connect } from 'react-redux'
 import { fetchEditJob, fetchAssignContactsToJob } from './fetches.js'
@@ -112,37 +113,52 @@ class EditJobForm extends Component {
             <>
                 {this.props.loading ? <Loading /> : 
                     <div>
-                        <h1>Enter Job Details</h1>
-                        <form onSubmit={this.handleSubmit}>
-                            <label>
-                                Job Name:
+                    <h1 className='page-header'>Enter Job Details</h1>
+                        <Form onSubmit={this.handleSubmit}>
+                        <Form.Group width='4'>
+                            <Form.Field>
+                                <label> Job Name</label>
                                 <input type='text' value={this.state.name} name="name" onChange={this.handleChange}/>
-                            </label><br/>
-                            <label>
-                                Street Address:
+                            </Form.Field>
+                        </Form.Group>
+                        <br/>
+                        <Form.Group >
+                            <Form.Field width='4'>
+                                <label>Street Address</label>
                                 <input type='text' value={this.state.street_address} name="street_address" onChange={this.handleChange}/>
-                            </label><br/>
-                            <label>
-                                City:
+                            </Form.Field>
+                            <Form.Field width='3'>
+                                <label>City</label>
                                 <input type='text' value={this.state.city} name="city" onChange={this.handleChange}/>
-                            </label><br/>
-                            <label>
-                                State:
+                            </Form.Field>
+                            <Form.Field width='2'>
+                                <label>State</label>
                                 <input type='text' value={this.state.state} name="state" onChange={this.handleChange}/>
-                            </label><br/>
-                            <h2>Add Users to This Job </h2>
+                            </Form.Field>
+                        </Form.Group>
+                        <br/>
+                        <br/>
+                        <br/>
+                        { this.props.contacts.length > 0 ?
+                            <>
+                            <h2 className='page-header' style={{fontSize: '2em', padding: '1.5em'}}>Add Users to This Job </h2>
+                            <Form.Group>
                             {this.props.contacts.map(contact => 
                                 <JobContactAssignForm 
-                                    contact={contact} 
-                                    handleChange={this.handleContactChange} 
-                                    checkedContacts={this.state.checkedContacts}
-                                    value={this.dropdownValue(contact.id)}
-                                    />)}
-                            <input type='submit'/>
-                        </form>
+                                key={`contact ${contact.id}`}
+                                contact={contact} 
+                                handleChange={this.handleContactChange} 
+                                checkedContacts={this.state.checkedContacts}
+                                value={this.dropdownValue(contact.id)}
+                                />)}
+                            </Form.Group>
+                            </>
+                            : null}
+                            <Button type='submit'>Submit</Button>
+                        </Form>
                     </div>
                 }
-              </>  
+            </>  
             
         )
     }

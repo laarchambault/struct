@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { Form, Button } from 'semantic-ui-react'
 import { withRouter } from 'react-router-dom'
 import { fetchCreateJob, fetchAssignContactsToJob } from './fetches'
 import JobContactAssignForm from '../contacts/JobContactAssignForm.js'
@@ -68,27 +69,36 @@ class NewJob extends Component {
     render() {
         return(
             <div>
-                <h1>Enter Job Details</h1>
-                <form onSubmit={this.handleSubmit}>
-                    <label>
-                        Job Name:
-                        <input type='text' value={this.state.name} name="name" onChange={this.handleChange}/>
-                    </label><br/>
-                    <label>
-                        Street Address:
-                        <input type='text' value={this.state.street_address} name="street_address" onChange={this.handleChange}/>
-                    </label><br/>
-                    <label>
-                        City:
-                        <input type='text' value={this.state.city} name="city" onChange={this.handleChange}/>
-                    </label><br/>
-                    <label>
-                        State:
+                <h1 className='page-header'>Enter Job Details</h1>
+                <Form onSubmit={this.handleSubmit}>
+                    <Form.Group width='4'>
+                        <Form.Field>
+                            <label> Job Name</label>
+                            <input type='text' value={this.state.name} name="name" onChange={this.handleChange}/>
+                        </Form.Field>
+                    </Form.Group>
+                    <br/>
+                    <Form.Group >
+                        <Form.Field width='4'>
+                            <label>Street Address</label>
+                            <input type='text' value={this.state.street_address} name="street_address" onChange={this.handleChange}/>
+                        </Form.Field>
+                        <Form.Field width='3'>
+                            <label>City</label>
+                            <input type='text' value={this.state.city} name="city" onChange={this.handleChange}/>
+                        </Form.Field>
+                        <Form.Field width='2'>
+                            <label>State</label>
                         <input type='text' value={this.state.state} name="state" onChange={this.handleChange}/>
-                    </label><br/>
+                        </Form.Field>
+                    </Form.Group>
+                    <br/>
+                    <br/>
+                    <br/>
                     { this.props.contacts.length > 0 ?
                     <>
-                    <h2>Add Users to This Job </h2>
+                    <h2 className='page-header' style={{fontSize: '2em', padding: '1.5em'}}>Add Users to This Job </h2>
+                    <Form.Group>
                     {this.props.contacts.map(contact => 
                         <JobContactAssignForm 
                         key={`contact ${contact.id}`}
@@ -97,11 +107,12 @@ class NewJob extends Component {
                         checkedContacts={this.state.checkedContacts}
                         value={this.dropdownValue(contact.id)}
                         />)}
-                    
+                    </Form.Group>
                     </>
+
                     : null}
-                    <input type='submit'/>
-                </form>
+                    <Button type='submit'>Submit</Button>
+                </Form>
             </div>
             
         )
