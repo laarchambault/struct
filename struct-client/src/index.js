@@ -14,7 +14,7 @@ ReactDOM.render(
   <React.StrictMode>
     <Router>
       <Provider store={store} >
-        <App />
+        <App className='bg'/>
       </Provider>
     </Router>
   </React.StrictMode>,

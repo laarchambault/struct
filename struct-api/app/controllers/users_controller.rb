@@ -5,9 +5,10 @@ class UsersController < ApplicationController
 
     def create
 
-        user = User.create(user_params)
-        
-        if user.valid?
+        user = User.new(user_params)
+        user.password = params[:password]
+        byebug
+        if user.save
             session[:user_id] = user.id 
             render json: user, status: :created
         else

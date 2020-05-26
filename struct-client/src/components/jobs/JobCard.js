@@ -15,8 +15,8 @@ class JobCard extends Component {
         return(
             <Card onClick={this.handleClick}>
                 <Card.Content>
-                    <Card.Header>{this.props.job.name}</Card.Header>
-                    <Card.Description>
+                    <Card.Header textAlign='right'>{this.props.job.name}</Card.Header>
+                    <Card.Description textAlign='left'>
                         <p><strong>Address: </strong>{this.props.job.street_address}</p>
                         <p><strong>City: </strong>{this.props.job.city}</p>
                         <p><strong>State: </strong>{this.props.job.state}</p>

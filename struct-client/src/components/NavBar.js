@@ -1,14 +1,14 @@
 import React from 'react'
+import structLogo from '../images/struct-logo.png'
 import { useDispatch, useSelector } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import { Button } from 'semantic-ui-react'
+import { Button, Image } from 'semantic-ui-react'
 import { actions } from '../exports/actions'
 
-const NavBar = () => {
+const NavBar = props => {
 
     const currentUser = useSelector( state => state.currentUser)
     const currentJob = useSelector( state => state.currentJob)
-    const currentProject = useSelector( state => state.currentProject)
 
     const dispatch = useDispatch()
 
@@ -20,25 +20,27 @@ const NavBar = () => {
         .then(r => r.json())
         .then( () => {
             dispatch(actions.logout())
-            this.props.history.push('/')
+            props.history.push('/')
         })
     }
 
     return(
-        <div>
+        <div className='nav top header'>
             { currentUser ? 
                 <>
-                <Button onClick={() => this.props.history.push('/editProfile')}>Profile</Button>
-                <Button onClick={() => handleLogout()}>Log Out</Button>
-                <Button onClick={() => this.props.history.push('/contacts')}>Contacts</Button>
+                <Image id='nav-logo' src={structLogo} alt='struct logo' />
+                <Button className='left' onClick={() => props.history.push('/contacts')}>Contacts</Button>
                 { currentJob ? 
                     <>
-                    <Button onClick={() => this.props.history.push('/jobs')}>Back to All Jobs</Button>
-                    { currentProject && (currentJob.permission === 1 || currentJob.permission === 2) ?
-                        <Button onClick={`/jobs/${currentProject.id}/edit`}>Edit Job Details</Button>
+                    <Button className='left' onClick={() => props.history.push('/jobs')}>Back to All Jobs</Button>
+                    { currentJob.permission === 1 || currentJob.permission === 2 ?
+                        <Button className='left' onClick={() => props.history.push(`/jobs/${currentJob.id}/edit`)}>Edit Job Details</Button>
                         : null }
                     </>
                     : null }
+                <Button className='right' onClick={() => props.history.push('/editProfile')}>Profile</Button>
+                <Button className='right' onClick={() => handleLogout()}>Log Out</Button>
+                
                 
                 </>
                 :

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
+import {Form, Button} from 'semantic-ui-react'
 
 class SignupForm extends Component {
 
@@ -44,7 +45,10 @@ class SignupForm extends Component {
             this.props.history.push('/jobs')
 
         })
-        .catch(error => alert(error))
+        .catch(error => {
+            console.error(error)
+            alert("Unable to create account.")
+        })
         } else {
             alert("Passwords do not match")
         }  
@@ -54,36 +58,57 @@ class SignupForm extends Component {
     
     render() {
         return(
-            <form onSubmit={this.handleSubmit}>
-                <label>First Name:
-                    <input type='text' name='f_name' value={this.state.f_name} onChange={this.handleChange}/>
-                </label><br/>
-                <label>Last Name:
-                    <input type='text' name='l_name' value={this.state.l_name} onChange={this.handleChange}/>
-                </label><br/>
-                <label>Email:
-                    <input type='text' name='email' value={this.state.email} onChange={this.handleChange} />
-                </label><br/>
-                <label>Phone:
-                    <input type='text' name='phone' value={this.state.phone} onChange={this.handleChange} />
-                </label><br/>
-                <label>Company:
+            <Form onSubmit={this.handleSubmit}>
+                <Form.Group widths='equal'>
+                    <Form.Field>
+                        <label>First Name: </label>
+                        <input type='text' name='f_name' value={this.state.f_name} onChange={this.handleChange}/>
+                    </Form.Field>
+                    <Form.Field>
+                        <label>Last Name: </label>
+                        <input type='text' name='l_name' value={this.state.l_name} onChange={this.handleChange}/>
+                    </Form.Field>
+                </Form.Group>
+                <Form.Group widths='equal'>
+                    <Form.Field>
+                        <label>Email: </label>
+                        <input type='text' name='email' value={this.state.email} onChange={this.handleChange} />
+                    </Form.Field>
+                    <Form.Field>
+                        <label>Phone: </label>
+                        <input type='text' name='phone' value={this.state.phone} onChange={this.handleChange} />
+                    </Form.Field>
+                </Form.Group>
+
+                <Form.Field width={8}>
+                    <label>Company: </label>
                     <input type='text' name='company' value={this.state.company} onChange={this.handleChange} />
-                </label><br/>
-                <label>Company Phone:
-                    <input type='text' name='company_phone' value={this.state.company_phone} onChange={this.handleChange} />
-                </label><br/>
-                <label>Company Email:
-                    <input type='text' name='company_email' value={this.state.company_email} onChange={this.handleChange} />
-                </label><br/><br/><br/>
-                <label>Password:
-                    <input type='password' name='password' value={this.state.password} onChange={this.handleChange} />
-                </label><br/>
-                <label>Confirm Password:
-                    <input type='password' name='confirmation_password' value={this.state.confirmation_password} onChange={this.handleChange} />
-                </label>
-                <input type='submit' value='Login'/>
-            </form>
+                </Form.Field>
+                <Form.Group widths='equal'>
+                    <Form.Field >
+                        <label>Company Phone: </label>
+                        <input type='text' name='company_phone' value={this.state.company_phone} onChange={this.handleChange} />
+                    </Form.Field>
+                    <Form.Field>
+                        <label>Company Email: </label>
+                        <input type='text' name='company_email' value={this.state.company_email} onChange={this.handleChange} />
+                    </Form.Field>
+                </Form.Group>
+                <br/>
+                <br/>
+                <Form.Group widths='equal'>
+                    <Form.Field>
+                        <label>Password: </label>
+                        <input type='password' name='password' value={this.state.password} onChange={this.handleChange} />
+                    </Form.Field>
+                    <Form.Field>
+                        <label>Confirm Password: </label>
+                        <input type='password' name='confirmation_password' value={this.state.confirmation_password} onChange={this.handleChange} />
+                    </Form.Field>
+                </Form.Group>
+                
+                <Button type='submit' floated='right' >Login</Button>
+            </Form>
         )
     }
 }

@@ -20,19 +20,31 @@ export const convertUserToUnix = (startOrEnd, stateObj) => {
     //returns UNIX for compatibility with Timeline component
 }
 
+
+
 //receives integer Unix
-export const convertUnixToUser = (unix) => { 
-    let y, mo, d, h, mi;
+export const convertUnixToUserDate = (unix) => { 
+    let y, mo, d;
     const time = new Date(parseInt(unix, 10))
+
     y = time.getFullYear()
     mo = time.getMonth() + 1
     d = time.getDate()
+
+    return `${mo}/${d}/${y}`
+}
+//returns pleasantly formatted date
+
+export const convertUnixToUserTime = (unix) => { 
+    let h, mi;
+    const time = new Date(parseInt(unix, 10))
+
     h = time.getHours()
     mi = time.getMinutes()
     if(mi.toString().length === 1) {
         mi = '0' + mi
     }
-    return `${mo}/${d}/${y} ${h > 12 ? (h-12 + ':' + mi +' pm') : (h + ':' + mi + ' am')}`
+    return `${h === 12 ? (h + ':' + mi + ' pm') : h > 12 ? (h-12 + ':' + mi +' pm') : (h + ':' + mi + ' am')}`
 }
-//returns pleasantly formatted date and time
+//returns pleasantly formatted time
 

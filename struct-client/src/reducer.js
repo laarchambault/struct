@@ -13,7 +13,17 @@ export default function reducer(state={
         case 'SET_USER':
             return {...state, currentUser: action.id};
         case 'LOGOUT':
-            return {...state, currentUser: null};
+            return {
+                ...state, 
+                currentUser: null, 
+                jobs: [],
+                currentJob: null,
+                currentProject: null,
+                currentJobProjects: [],
+                userProjects: [],
+                items: [],
+                contacts: [],
+            };
         case 'UPDATE_JOBS':
             return {...state, jobs: action.jobs};
         case 'SET_JOB':

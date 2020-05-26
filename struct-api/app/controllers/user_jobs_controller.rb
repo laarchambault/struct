@@ -19,20 +19,17 @@ class UserJobsController < ApplicationController
     def update_job_contacts
         job_id = params[:id]
         params[:checkedContacts].map do |obj|
-            uj = UserJob.find_by(user_id: obj[:'user_id'], job_id: job_id)
-            byebug
-            if(obj[:'permission'] == '4')
-                byebug
+            uj = UserJob.find_by(user_id: obj[:"user_id"], job_id: job_id)
+            if(obj[:"permission"] == '4' )
                 if uj
                     uj.destroy
                 end
             else
-                byebug
                 if uj
-                    uj.permission = obj[:'permission']
+                    uj.permission = obj[:"permission"]
                     uj.save
                 else
-                    UserJob.create(user_id: obj[:'user_id'], job_id: job_id, permission: obj[:'permission'])
+                    UserJob.create(user_id: obj[:"user_id"], job_id: job_id, permission: obj[:"permission"])
                 end
             end
         end

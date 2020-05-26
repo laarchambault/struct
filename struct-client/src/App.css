@@ -1,6 +1,17 @@
+
+body, html {
+  height: 100%;
+  color: #384242;
+  background-color: rgb(201, 218, 218);
+}
+
 .App {
+  height: 100%;
   text-align: center;
 }
+
+
+
 
 .App-logo {
   height: 40vmin;
@@ -36,9 +47,76 @@
     transform: rotateY(360deg);
   }
 }
+button.ui.button {
+color: #384242;
+background-color: #f5f3e6;
+letter-spacing: .1em;
+text-transform: uppercase;
+border-bottom: 2px solid #cac7bb;
+border-left: 2px solid #fffdf1;
+}
+
+button.ui.button.right {
+  float: right;
+}
+
+button.ui.button.left {
+  float: left;
+}
+
+div.ui.stackable.cards.job-cards div.content {
+  background-color: #f5f3e6;
+}
 
 div.ui.grid {
   margin-top: 50px;
+}
+
+#logo {
+  margin: auto;
+}
+
+#nav-logo {
+  width: 75px;
+  height: 75px;
+  float: left;
+  margin-right: 75px;
+}
+
+.page-header {
+  font-size: 3em;
+  color: #384242;
+  padding-top: 2em;
+  letter-spacing: .2em;
+}
+
+/* .main.page-header {
+  font-size: 6em;
+  font-weight: 700;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  display: inline;
+  padding-top: 150px;
+} */
+
+.header {
+  background-color: #fff;
+  overflow: auto;
+  padding: 5px;
+}
+.nav.header {
+  box-shadow: 0px 3px 5px rgb(148, 147, 147);
+}
+.nav.top {
+  background-color: #116b6e;
+}
+div.nav.top.header button.ui.button {
+  margin-top: 20px;
+}
+
+.nav.second {
+  border-bottom: 2px solid white;
+  background-color: #f6853f;
+  padding: 10px 10px 10px 155px;
 }
 
 #loading {
@@ -48,4 +126,10 @@ div.ui.grid {
   animation-name: App-logo-spin;
   animation-duration: 2s;
   animation-iteration-count: infinite;
+}
+
+form.ui.form {
+  padding: 50px;
+  margin: auto;
+  max-width: 1000px;
 }

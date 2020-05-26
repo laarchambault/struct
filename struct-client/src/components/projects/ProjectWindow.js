@@ -1,110 +1,99 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { fetchProjects, fetchUserProjects, createProjectItem, groups, keys, updateItemList } from './projectFunctions'
-import ShowProject from './ShowProject'
+import TestShowProject from './TestShowProject'
 import {  withRouter } from 'react-router-dom'
 import EditProject from './EditProject'
 import Loading from '../../Loading'
-// import { convertUnixToUser } from '../../calculations/timeConversions'
-import { useDispatch, useSelector } from 'react-redux'
+// import { convertUnixToUserDate, convertUnixToUserTime } from '../../calculations/timeConversions'
+import { connect } from 'react-redux'
 import { Button } from 'semantic-ui-react'
 import Timeline from 'react-calendar-timeline'
 import 'react-calendar-timeline/lib/Timeline.css'
 import NewProject from './NewProject'
 import moment from 'moment'
-import { actions } from '../../exports/actions'
 
 
-const ProjectWindow = () => {
+class ProjectWindow extends React.Component {
 
-    const [view, setView] = useState('')
+    state={ view: '' }
 
-    const loading = useSelector( state => state.loading)
-    const currentJob = useSelector( state => state.currentJob)
-    const currentJobProjects = useSelector( state => state.currentJobProjects)
-    const userProjects = useSelector( state => state.userProjects)
-    const items = useSelector( state => state.items)
-    const currentProject = useSelector( state => state.currentProject)
-
-    const dispatch = useDispatch()
-
-
-
-    const handleClick = e => {
-        setView('new')
+    setView = view => {
+        this.setState({view: view})
     }
 
-    const handleDoubleClick = e => {
+    handleClick = e => {
+        this.setView('new')
+    }
 
+    handleDoubleClick = e => {
         const projId = parseInt(e.currentTarget.title, 10)
-        debugger
-        const project = currentJobProjects.find(project => project.id === projId)
-        debugger
-        dispatch(actions.setCurrentProject(project))
-        debugger
-        setView('show')
+        const project = this.props.currentJobProjects.find(project => project.id === projId)
+        this.props.setCurrentProject(project)
+        this.setView('show')
     }
 
-    const fetchUserProjectsAndSetState = (jobId, updView=view) => {
+    fetchUserProjectsAndSetState = (jobId, updView=this.state.view) => {
         fetchUserProjects(jobId)
         .then( projects => {
-            dispatch(actions.setUserProjects(projects)) 
-            setView(updView)
+            this.props.setUserProjects(projects)
+            this.setView(updView)
         })
         .catch(console.error)
     }
 
     //fetches job projects and userProjects, setting redux state
-    useEffect(() => {
-        dispatch(actions.toggleLoad())
-        fetchProjects(currentJob.id)
+    componentDidMount = () => {
+        this.props.toggleLoad()
+        this.setState({view: ''})
+        fetchProjects(this.props.currentJob.id)
         .then(projects => {
             let items = projects.map( project => {
-                return createProjectItem(project, handleDoubleClick)
+                return createProjectItem(project, this.handleDoubleClick)
             })
-            dispatch(actions.setCurrentJobProjects(projects))
-            dispatch(actions.setItems(items))
-            dispatch(actions.toggleLoad())
+            this.props.setCurrentJobProjects(projects)
+            this.props.setItems(items)
+            this.props.toggleLoad()
         })
         .catch( error => {
             console.error(error)
-            dispatch(actions.toggleLoad())
+            this.props.toggleLoad()
         })
-        fetchUserProjectsAndSetState(currentJob.id)
-    }, [dispatch, currentJob.id])
-
-
-    const updateFromEdit = project => {
-        setView('show')
-        updateItems(project)
-        updateProject(project)
+        this.fetchUserProjectsAndSetState(this.props.currentJob.id)
     }
 
-    const updateItems = project => {
-        let updItem = createProjectItem(project, handleDoubleClick)
-        let itemArr = updateItemList(items, updItem, project.id)
-        dispatch(actions.setItems(itemArr))
+    updateFromEdit = project => {
+        this.setView('show')
+        this.updateItems(project)
+        this.updateProject(project)
+    }
+
+    updateItems = project => {
+        let updItem = createProjectItem(project, this.handleDoubleClick)
+        let itemArr = updateItemList(this.props.items, updItem, project.id)
+        this.props.setItems(itemArr)
     }
     
 
-    const updateProject = (newProject ) => {
-        let updProjects = [...currentJobProjects]
+    updateProject = newProject => {
+        let updProjects = [...this.props.currentJobProjects]
         let i = updProjects.findIndex( project => project.id === newProject.id)
         updProjects[i] = newProject
-        dispatch(actions.setCurrentJobProjects(updProjects))        
+        this.props.setCurrentJobProjects(updProjects)
+        this.props.setCurrentProject(newProject) 
     }
 
-    const updateStateFromNew = (project) => {
-        let newItem = createProjectItem(project, handleDoubleClick)
-        let itemArr = [...items, newItem]
-        let projArr = [...currentJobProjects, project]
-        dispatch(actions.setItems(itemArr))
-        dispatch(actions.setCurrentJobProjects(projArr))
-        dispatch(actions.setCurrentProject(project))
+    updateStateFromNew = project => {
+        let newItem = createProjectItem(project, this.handleDoubleClick)
+        let itemArr = [...this.props.items, newItem]
+        let projArr = [...this.props.currentJobProjects, project]
+        this.props.setItems(itemArr)
+        this.props.setCurrentJobProjects(projArr)
+        this.props.setCurrentProject(project)
     }
 
-    const currentPermission = () => {
-        const project = userProjects.find( userProject => 
-            userProject.project_id === currentProject.id
+    currentPermission = () => {
+        const project = this.props.userProjects.find( userProject => 
+            userProject.project_id === this.props.currentProject.id
             )
         if(project){
             return project.permission
@@ -113,47 +102,65 @@ const ProjectWindow = () => {
         } 
     }
 
-
-    return(
+    render() {
+        return(
         <>
-            {loading ? <Loading/> :
+            {this.props.loading ? <Loading/> :
                 <div>
-                { currentJob.permission === 1 || currentJob.permission === 2 ?
-                <Button onClick={handleClick}>New Project</Button>
+                { this.props.currentJob.permission === 1 || this.props.currentJob.permission === 2 ?
+                <Button onClick={this.handleClick}>New Project</Button>
                 : null }
                 <Timeline groups={groups} //'groups' and 'keys' are defined in helper functions
-                items={items}
+                items={this.props.items}
                 keys={keys}
                 defaultTimeStart={moment().add(-12, 'hour')}
                 defaultTimeEnd={moment().add(12, 'hour')}/>
-                { view === 'new' ?
+                { this.state.view === 'new' ?
                     <NewProject 
-                        updateState={updateStateFromNew}
-                        updateUsers={fetchUserProjectsAndSetState}
-                        setView={setView}
+                        updateState={this.updateStateFromNew}
+                        updateUsers={this.fetchUserProjectsAndSetState}
+                        setView={this.setView}
                         /> 
-                : view === 'edit' ?
+                : this.state.view === 'edit' ?
                         <EditProject 
-                            project={currentProject} 
-                            permission={currentPermission()} 
-                            updateState={updateFromEdit}
-                            updateUsers={fetchUserProjectsAndSetState}
+                            updateState={this.updateFromEdit}
+                            updateUsers={this.fetchUserProjectsAndSetState}
+                            setView={this.setView}
                             />
                         :
-                        view === 'show' ?
-                            <ShowProject 
-                                showEdit={() => setView('edit')} 
-                                project={currentProject} 
-                                projectPermission={currentPermission()} 
-                                jobPermission={currentJob.permission} 
-                                updateProject={updateProject} 
+                        this.state.view === 'show' ?
+                            <TestShowProject 
+                                showEdit={() => this.setView('edit')} 
+                                projectPermission={this.currentPermission()} 
+                                updateProject={this.updateProject} 
                                 />
                         : null }
             </div>
             }
         </>
-        
-    )
+    )}
 }
 
-export default withRouter(ProjectWindow)
+const mapStateToProps = state => {
+    return {
+        loading: state.loading,
+        currentJob: state.currentJob,
+        currentJobProjects: state.currentJobProjects,
+        userProjects: state.userProjects,
+        items: state.items,
+        currentProject: state.currentProject
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setCurrentJob: job => dispatch({type: 'SET_JOB', job}),
+        setCurrentProject: project => dispatch({type: 'SET_PROJECT', project}),
+        setUserProjects: projects => dispatch({type: 'SET_USER_PROJECTS', projects}),
+        toggleLoad: () => dispatch({type: 'TOGGLE_LOADING'}),
+        setCurrentJobProjects: projects => dispatch({type: 'SET_CURRENT_JOB_PROJECTS', projects}),
+        setItems: items => dispatch({type: 'SET_ITEMS', items}),
+    }
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ProjectWindow))

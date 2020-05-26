@@ -12,6 +12,10 @@ class JobsContainer extends Component {
 
     componentDidMount() {
         this.props.toggleLoad()
+        this.props.setCurrentJob('')
+        this.props.setCurrentProject('')
+        this.props.setItems([])
+        this.props.setUserProjects([])
         fetch(`http://localhost:3000/users/${this.props.userId}`, {
             credentials: 'include'
         })
@@ -26,7 +30,9 @@ class JobsContainer extends Component {
             this.props.updateJobs(user.jobs)
             this.props.toggleLoad()
         })
+        .catch(() => this.props.toggleLoad())
     }
+
 
     toggleView = () => {
         this.setState({ viewAll: !this.state.viewAll})
@@ -43,7 +49,9 @@ class JobsContainer extends Component {
             <>
             {this.props.loading ? <Loading/> :
                 <div>
-                    <Button onClick={this.toggleView}>{ this.state.viewAll ? "Create Job" : "Return to All Jobs"}</Button>
+                    <div className='nav second header'>
+                        <Button className='left' onClick={this.toggleView}>{ this.state.viewAll ? "Create Job" : "Return to All Jobs"}</Button>
+                    </div>
                     { this.state.viewAll ? 
                         <ViewJobs userId={this.props.userId} jobs={this.props.jobs}/> 
                     : 
@@ -69,7 +77,11 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         updateJobs: jobs => dispatch({type: 'UPDATE_JOBS', jobs: jobs}),
-        toggleLoad: () => dispatch({type: 'TOGGLE_LOADING'})
+        toggleLoad: () => dispatch({type: 'TOGGLE_LOADING'}),
+        setCurrentJob: job => dispatch({type: 'SET_JOB', job}),
+        setCurrentProject: project => dispatch({type: 'SET_CURRENT_PROJECT', project}),
+        setItems: items => dispatch({type: 'SET_ITEMS', items}),
+        setUserProjects: projects => dispatch({type: 'SET_USER_PROJECTS', projects})
     }
 }
 

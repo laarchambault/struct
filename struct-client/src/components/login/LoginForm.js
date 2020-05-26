@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { fetchContactsAndSetState } from '../contacts/contactHelpers'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
+import { Form, Button } from 'semantic-ui-react'
 
 const initialState = {
     email: '',
@@ -45,15 +46,20 @@ class LoginForm extends Component {
 
     render() {
         return(
-            <form onSubmit={this.handleSubmit}>
-                <label>Email:
+            <Form onSubmit={this.handleSubmit} >
+                <Form.Group widths='equal'>
+                <Form.Field>
+                    <label>Email: </label>
                     <input type='text' name='email' value={this.state.email} onChange={this.handleChange} />
-                </label>
-                <label>Password:
+                </Form.Field>
+                <Form.Field>
+                    <label>Password: </label>
                     <input type='password' name='password' value={this.state.password} onChange={this.handleChange} />
-                </label>
-                <input type='submit' value='Login'/>
-            </form>
+
+                </Form.Field>
+                </Form.Group>
+                <Button floated='right' type='submit'>Login</Button>
+            </Form>
         )
     }
 }

@@ -3,6 +3,9 @@ import LoginForm from './LoginForm'
 import Loading from '../../Loading'
 import SignupForm from './SignupForm'
 import { connect } from 'react-redux'
+import { Button, Image } from 'semantic-ui-react'
+import structFull from '../../images/struct-full-logo.png'
+
 
 
 class Login extends Component {
@@ -14,9 +17,11 @@ class Login extends Component {
             <>
             { this.props.loading ? <Loading/> :
                 <div>
-                    <h1>Welcome to Struct</h1>
-                    <h3>Work Flow Tools for Builders to manage their construction sites</h3>
-                    <button onClick={() => this.setState({form: 'log in'})}>Log In</button> or <button onClick={() => this.setState({form: 'sign up'})}>Sign up</button>
+                    <div className='nav header'>
+                        <Image id='logo' src={structFull} alt='logo'/>
+                    </div>
+                    <h3 >Work Flow Tools for Builders to manage their construction sites</h3>
+                    <Button onClick={() => this.setState({form: 'log in'})}>Log In</Button> or <Button onClick={() => this.setState({form: 'sign up'})}>Sign up</Button>
                     { this.state.form === 'log in' ? <LoginForm /> : 
                         this.state.form === 'sign up'? <SignupForm /> : null }
                 </div>

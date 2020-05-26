@@ -1,8 +1,8 @@
 import React from 'react'
 import { convertUserToUnix } from '../../calculations/timeConversions.js'
-import { useDispatch, useSelector } from 'react-redux'
+import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import { Form } from 'semantic-ui-react'
+import { Form, Button } from 'semantic-ui-react'
 import { statusOptions, fetchAssignContactsToProject } from './projectFunctions'
 import ProjectContactAssignForm from '../contacts/ProjectContactAssignForm.js'
 
@@ -26,16 +26,6 @@ class NewProject extends React.Component {
         checkedContacts: []
     }
 
-    
-    currentUser = useSelector(state => state.currentUser)
-    currentJob = useSelector(state => state.currentJob)
-    contacts = useSelector(state => state.contacts)
-    items = useSelector(state => state.items)
-    currentJobProjects = useSelector(state => state.currentJobProjects)
-    
-    dispatch = useDispatch()
-    
-
     handleChange = e => {
         this.setState({ [e.target.name]: e.target.value })
     }
@@ -54,7 +44,7 @@ class NewProject extends React.Component {
             end_time: endUnix,
             sub_needs: this.state.sub_needs,
             status: this.state.status,
-            job_id: this.currentJob.id
+            job_id: this.props.currentJob.id
         }
         fetch('http://localhost:3000/projects', {
             method: 'POST',
@@ -74,12 +64,13 @@ class NewProject extends React.Component {
         .then(project => {
             const contactObj = {
                 checkedContacts: this.state.checkedContacts, 
-                job_id: this.currentJob.id
+                job_id: this.props.currentJob.id
             }
+            debugger
             fetchAssignContactsToProject(contactObj, project.id)
             .then( () => {
-                this.updateState(project)
-                this.props.updateUsers(this.currentJob.id, 'show')
+                this.props.updateState(project)
+                this.props.updateUsers(this.props.currentJob.id, 'show')
             })
         })
         .catch(error => console.error(error))
@@ -122,6 +113,9 @@ class NewProject extends React.Component {
     render() {
         return(
             <div>
+                { this.props.currentProject ? 
+                    <Button onClick={() => this.props.setView('show')}>Back to Project</Button>
+                    : <Button onClick={() => this.props.setView('')}>Back to {this.props.currentJob.name}</Button>}
                 <h1>Create New Project</h1>
                 <Form onSubmit={this.handleSubmit}>
                     <Form.Input 
@@ -216,10 +210,10 @@ class NewProject extends React.Component {
                         options={statusOptions}
                         onChange={this.handleDropdown}
                     /><br/><br/>
-                    { this.contacts.length > 0 ?
+                    { this.props.contacts.length > 0 ?
                     <>
                     <h2>Add Users to This Job </h2>
-                    {this.contacts.map(contact => 
+                    {this.props.contacts.map(contact => 
                         <ProjectContactAssignForm 
                         contact={contact} 
                         handleChange={this.handleContactChange} 
@@ -236,4 +230,19 @@ class NewProject extends React.Component {
     }
 }
 
-export default withRouter(NewProject)
+const mapStateToProps = state => {
+    return {
+        currentUser: state.currentUser,
+        currentJob: state.currentJob,
+        contacts: state.contacts,
+        items: state.items,
+        currentJobProjects: state.currentJobProjects
+    }
+    
+}
+
+
+    
+    
+
+export default withRouter(connect(mapStateToProps)(NewProject))

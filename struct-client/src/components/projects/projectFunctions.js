@@ -58,6 +58,25 @@ export const fetchAssignContactsToProject = (contactObj, project_id) => {
     })
 }
 
+export const fetchUpdateProject = (projectId, bodyObj) => {
+    return fetch(`http://localhost:3000/projects/${projectId}`, {
+        method: 'PUT',
+        credentials: "include",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyObj)
+    })
+    .then(r => {
+        if(r.ok) {
+            return r.json()
+        } else {
+            throw r
+        }
+    })
+}
+    
+
 export const getSubcontractorsForProject = (projectId) => {
     return fetch(`http://localhost:3000/projects/${projectId}/subcontractors`, {
         credentials: 'include'
