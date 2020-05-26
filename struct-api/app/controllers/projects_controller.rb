@@ -48,6 +48,12 @@ class ProjectsController < ApplicationController
         render json: user_projects
     end
 
+    def show_builders
+        project = Project.find_by(id: params[:id])
+        user_projects = project.user_projects.where(permission: 1).or(project.user_projects.where(permission: 2))
+        render json: user_projects
+    end
+
     private
     def project_params
         params.require(:project).permit(:name, :start_time, :end_time, :sub_needs, :status, :job_id)

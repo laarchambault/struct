@@ -49,7 +49,7 @@ class JobsContainer extends Component {
             <>
             {this.props.loading ? <Loading/> :
                 <div>
-                    <div className='nav second header'>
+                    <div className='nav second heading'>
                         <Button className='left' onClick={this.toggleView}>{ this.state.viewAll ? "Create Job" : "Return to All Jobs"}</Button>
                     </div>
                     { this.state.viewAll ? 

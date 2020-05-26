@@ -25,7 +25,7 @@ const NavBar = props => {
     }
 
     return(
-        <div className='nav top header'>
+        <div className='nav top heading'>
             { currentUser ? 
                 <>
                 <Image id='nav-logo' src={structLogo} alt='struct logo' />

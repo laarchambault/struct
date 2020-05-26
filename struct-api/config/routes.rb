@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   resources :users, only: [:create, :show, :update]
 
   get '/projects/:id/subcontractors', to: 'projects#show_subcontractors'
+  get 'projects/:id/builders', to: 'projects#show_builders'
   post '/projects/permission', to: 'projects#projects_with_permission'
   resources :projects, only: [:create, :update, :index]
 

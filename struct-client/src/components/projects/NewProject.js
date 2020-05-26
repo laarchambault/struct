@@ -66,7 +66,6 @@ class NewProject extends React.Component {
                 checkedContacts: this.state.checkedContacts, 
                 job_id: this.props.currentJob.id
             }
-            debugger
             fetchAssignContactsToProject(contactObj, project.id)
             .then( () => {
                 this.props.updateState(project)
@@ -114,116 +113,128 @@ class NewProject extends React.Component {
         return(
             <div>
                 { this.props.currentProject ? 
-                    <Button onClick={() => this.props.setView('show')}>Back to Project</Button>
-                    : <Button onClick={() => this.props.setView('')}>Back to {this.props.currentJob.name}</Button>}
-                <h1>Create New Project</h1>
+                    <Button className='left' onClick={() => this.props.setView('show')}>Back to Project</Button>
+                    : <Button className='left' onClick={() => this.props.setView('')}>Back to {this.props.currentJob.name}</Button>}
+                <h1 className='page-header'>Create New Project</h1>
                 <Form onSubmit={this.handleSubmit}>
-                    <Form.Input 
-                        label='Title ' 
+                    <Form.Group width='4'>
+                        <Form.Input 
+                        label='Title' 
                         value={this.state.name} 
                         name="name" 
                         onChange={this.handleChange} 
                         />
+                    </Form.Group>
                     
-                    <h2>Project Start Time</h2>
-                    <Form.Input 
-                        label='Month (MO) ' 
-                        type='integer' 
-                        value={this.state.s_month} 
-                        name="s_month" 
-                        onChange={this.handleChange} 
-                        /><br/>
-                    <Form.Input 
-                        label='Day (DD) ' 
-                        type='integer' 
-                        value={this.state.s_day} 
-                        name="s_day" 
-                        onChange={this.handleChange} 
-                        /><br/>
-                    <Form.Input 
-                        label='Hour (HH) ' 
-                        type='integer' 
-                        value={this.state.s_hour} 
-                        name="s_hour" 
-                        onChange={this.handleChange} 
-                        /><br/>
-                    <Form.Input 
-                        label='Minute (MM) ' 
-                        type='integer' 
-                        value={this.state.s_minute} 
-                        name="s_minute" 
-                        onChange={this.handleChange} 
-                        /><br/>
-                    <Form.Input 
-                        label='Year (YYYY) ' 
-                        type='integer' 
-                        value={this.state.s_year} 
-                        name="s_year" 
-                        onChange={this.handleChange} 
-                        /><br/>
                     
-                    <h2>Project End Time</h2>
+                    <h2 className='page-header' style={{fontSize: '2em', padding: '1.5em'}}>Project Start Time</h2>
+                    <Form.Group >
+                        <Form.Input width='2'
+                            label='Month (MO) ' 
+                            type='integer' 
+                            value={this.state.s_month} 
+                            name="s_month" 
+                            onChange={this.handleChange} 
+                            />
+                        <Form.Input width='2'
+                            label='Day (DD) ' 
+                            type='integer' 
+                            value={this.state.s_day} 
+                            name="s_day" 
+                            onChange={this.handleChange} 
+                            />
+                        <Form.Input width='2'
+                            label='Hour (HH) ' 
+                            type='integer' 
+                            value={this.state.s_hour} 
+                            name="s_hour" 
+                            onChange={this.handleChange} 
+                            />
+                        <Form.Input width='2'
+                            label='Minute (MM) ' 
+                            type='integer' 
+                            value={this.state.s_minute} 
+                            name="s_minute" 
+                            onChange={this.handleChange} 
+                            />
+                        <Form.Input width='3'
+                            label='Year (YYYY) ' 
+                            type='integer' 
+                            value={this.state.s_year} 
+                            name="s_year" 
+                            onChange={this.handleChange} 
+                            />
+                    </Form.Group>
+                    
+                    
+                    <h2 className='page-header' style={{fontSize: '2em', padding: '1.5em'}}>Project End Time</h2>
+                    <Form.Group>
                     <Form.Input 
                         label='Month (MO) ' 
                         type='integer' 
                         value={this.state.e_month} 
                         name="e_month" 
                         onChange={this.handleChange} 
-                        /><br/>
-                    <Form.Input 
+                        />
+                    <Form.Input width='2'
                         label='Day (DD) ' 
                         type='integer' 
                         value={this.state.e_day} 
                         name="e_day" 
                         onChange={this.handleChange} 
-                        /><br/>
-                    <Form.Input 
+                        />
+                    <Form.Input width='2'
                         label='Hour (HH) ' 
                         type='integer' 
                         value={this.state.e_hour} 
                         name="e_hour" 
                         onChange={this.handleChange} 
-                        /><br/>
-                    <Form.Input 
+                        />
+                    <Form.Input width='2'
                         label='Minute (MM) ' 
                         type='integer' 
                         value={this.state.e_minute} 
                         name="e_minute" 
                         onChange={this.handleChange} 
-                        /><br/>
-                    <Form.Input 
+                        />
+                    <Form.Input width='3'
                         label='Year (YYYY) ' 
                         type='integer' 
                         value={this.state.e_year} 
                         name="e_year" 
                         onChange={this.handleChange} 
-                        /><br/>
+                        />
+                    </Form.Group>
 
-                    <h2> Subcontractor Requirements (optional) </h2>
+
+                    <h2 className='page-header' style={{fontSize: '2em', padding: '1.5em'}}> Subcontractor Requirements (optional) </h2>
                     <Form.Input value={this.state.sub_needs} name='sub_needs' onChange={this.handleChange} /><br/>
 
-                    <h2>Project Status</h2>
+                    <h2 className='page-header' style={{fontSize: '2em', padding: '1.5em'}}>Project Status</h2>
                     <Form.Dropdown 
-                        placeholder='Select Status'
+                        label='Select Status'
                         fluid
                         seletion='true'
                         options={statusOptions}
                         onChange={this.handleDropdown}
-                    /><br/><br/>
+                        value={this.state.status}
+                        />
                     { this.props.contacts.length > 0 ?
                     <>
-                    <h2>Add Users to This Job </h2>
+                    <h2 className='page-header' style={{fontSize: '2em', padding: '1.5em'}}>Add Users to This Job </h2>
+                    <Form.Group>
                     {this.props.contacts.map(contact => 
                         <ProjectContactAssignForm 
+                        key={`contact ${contact.id}`}
                         contact={contact} 
                         handleChange={this.handleContactChange} 
                         checkedContacts={this.state.checkedContacts}
                         value={this.dropdownValue(contact.id)}
                         />)}
-                    
+                    </Form.Group>
                     </>
                     : null}
-                    <Form.Input type='submit' value='Create Project' />
+                    <Button type='submit'>Create Project</Button>
                 </Form>
             </div>
         )

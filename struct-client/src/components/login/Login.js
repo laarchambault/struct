@@ -17,7 +17,7 @@ class Login extends Component {
             <>
             { this.props.loading ? <Loading/> :
                 <div>
-                    <div className='nav header'>
+                    <div className='nav heading'>
                         <Image id='logo' src={structFull} alt='logo'/>
                     </div>
                     <h3 >Work Flow Tools for Builders to manage their construction sites</h3>

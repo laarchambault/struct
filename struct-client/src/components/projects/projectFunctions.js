@@ -90,6 +90,19 @@ export const getSubcontractorsForProject = (projectId) => {
     })
 }
 
+export const getBuildersForProject = (projectId) => {
+    return fetch(`http://localhost:3000/projects/${projectId}/builders`, {
+        credentials: 'include'
+    })
+    .then(r => {
+        if(r.ok) {
+            return r.json()
+        } else {
+            throw r
+        }
+    })
+}
+
 export const createProjectItem  = (project, doubleClickCallback) => {
     return {
         id: project.id,

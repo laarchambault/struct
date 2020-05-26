@@ -1,18 +1,22 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { convertUnixToUserDate, convertUnixToUserTime } from '../../calculations/timeConversions'
-import { getSubcontractorsForProject } from './projectFunctions'
-import { connect } from 'react-redux'
-import { Grid, Button, Item, Header } from 'semantic-ui-react'
+import { getSubcontractorsForProject, getBuildersForProject } from './projectFunctions'
+import { useSelector } from 'react-redux'
+import { Grid, Button, Item, Header, Card } from 'semantic-ui-react'
 
 
-class ShowProject extends React.Component {
-    state={ subcontractors: [] }
-    //TODO:create toggle function to change style of button when active
+const ShowProject = props => {
+    const [subcontractors, setSubcontractors] = useState([])
+    const [builders, setBuilders] = useState([])
     
-    handleStatusChange = e => {
-        let projectObj = { ...this.props.currentProject}
+    const currentJob = useSelector(state => state.currentJob)
+    const currentProject = useSelector( state => state.currentProject )
+
+
+    const handleStatusChange = e => {
+        let projectObj = { ...currentProject}
         projectObj.status = e.target.innerText
-        fetch( `http://localhost:3000/projects/${this.props.currentProject.id}`, {
+        fetch( `http://localhost:3000/projects/${currentProject.id}`, {
             method: 'PUT',
             credentials: "include",
             headers: {
@@ -28,40 +32,61 @@ class ShowProject extends React.Component {
             }
         })
         .then(project => {
-            this.props.updateProject(project)
+            props.updateProject(project)
         })
         .catch(error => console.log(error))
     }
 
-    componentDidMount = () => {
-        getSubcontractorsForProject(this.props.currentProject.id)
-        .then(subcontractors => {
-            debugger
-            this.setState({subcontractors: subcontractors})
-        })
-    }
+    useEffect(() => {
+        getSubcontractorsForProject(currentProject.id)
+        .then(subcontractors => setSubcontractors(subcontractors))
+        getBuildersForProject(currentProject.id)
+        .then(builders => setBuilders(builders))
+    }, [currentProject])
 
 
-    highestPermission = () => {
-        if(this.props.currentJob.permission > this.props.projectPermission) {
-            return this.props.currentJob.permission
+
+    const highestPermission = () => {
+        if(currentJob.permission > props.projectPermission) {
+            return currentJob.permission
         } else {
-            return this.props.projectPermission
+            return props.projectPermission
         }
     }
 
-    render() {
-        const { showEdit, currentProject, currentJob } = this.props
+    const { showEdit } = props
         return(
-            <Grid divided='vertically' > {/*TODO: className={come up with something to style the project like a box>}*/} 
-                { this.highestPermission() > 0 && this.highestPermission() < 4 ?
-                    <Button onClick={showEdit}>Edit Project Details</Button>
-                : null}
-                <Grid.Row columns={2}>
+            <Grid divided='vertically' id='show-project'> {/*TODO: className={come up with something to style the project like a box>}*/} 
+                
+                <Grid.Row columns={3}>
+                    <Grid.Column>
+                    { highestPermission() > 0 && highestPermission() < 4 ?
+                        <Button onClick={showEdit}>Edit Project Details</Button>
+                    : null}
+                    </Grid.Column>
                     <Grid.Column floated='left' textAlign='left'>
                         <h3>{currentJob.name}</h3>
                     </Grid.Column>
-                    <Grid.Column floated='right' textAlign='right'>
+                    <Grid.Column>
+                    <Header as='h3'>Builder Info</Header>
+                        { builders.map(builder => {
+                            return (
+                            <Item>
+                                <Item.Header><strong>{builder.user.f_name} {builder.user.l_name}</strong></Item.Header>
+                                <Item.Meta>{builder.user.phone}</Item.Meta>
+                                <Item.Meta>{builder.user.email}</Item.Meta>
+                                <Item.Header>Company Info</Item.Header>
+                                <Item.Meta><strong>{builder.user.company}</strong></Item.Meta>
+                                <Item.Meta>{builder.user.company_phone}</Item.Meta>
+                                <Item.Meta>{builder.user.company_email}</Item.Meta>
+                            </Item>
+                            )
+                        })}
+                    </Grid.Column>
+                    
+                </Grid.Row>
+                <Grid.Row columns={1}>
+                    <Grid.Column floated='left' textAlign='left'>
                         <h1>{currentProject.name}</h1>
                     </Grid.Column>
                 </Grid.Row>
@@ -80,44 +105,46 @@ class ShowProject extends React.Component {
                     <h1>{convertUnixToUserDate(currentProject.end_time)}</h1>
                     <h1>{convertUnixToUserTime(currentProject.end_time)}</h1>                    </Grid.Column>
                 </Grid.Row>
-                { this.highestPermission() === 1 || this.highestPermission() === 2 ?
+                { highestPermission() === 1 || highestPermission() === 2 ?
                     <Grid.Row centered>
-                        <Button onClick={this.handleStatusChange}>Not Started</Button>
-                        <Button onClick={this.handleStatusChange}>In Progress</Button>
-                        <Button onClick={this.handleStatusChange}>Ready for Next Project</Button>
-                        <Button onClick={this.handleStatusChange}>Approved</Button><br/>
+                        <Button onClick={handleStatusChange}>Not Started</Button>
+                        <Button onClick={handleStatusChange}>In Progress</Button>
+                        <Button onClick={handleStatusChange}>Ready for Next Project</Button>
+                        <Button onClick={handleStatusChange}>Approved</Button><br/>
                     </Grid.Row>
                 : null}
     
-                { this.highestPermission() > 0 && this.highestPermission() < 4 ?
+                { highestPermission() > 0 && highestPermission() < 4 ?
+                    <>
                     <Grid.Row columns={1}>
-                    <Grid.Column>
                         <Header as='h2'>Subcontractors</Header>
-                        { this.state.subcontractors.map(subcontractor => {
+                    </Grid.Row>
+                    <Grid.Row columns={1}>
+                        <Card.Group>
+                        { subcontractors.map(subcontractor => {
                             return (
-                            <Item>
-                                <Item.Header><strong>{subcontractor.user.f_name} {subcontractor.user.L_name}</strong></Item.Header>
-                                <Item.Meta>{subcontractor.user.phone}</Item.Meta>
-                                <Item.Meta>{subcontractor.user.email}</Item.Meta>
-                                <Item.Header>Company Info</Item.Header>
-                                <Item.Meta><strong>{subcontractor.user.company}</strong></Item.Meta>
-                                <Item.Meta>{subcontractor.user.company_phone}</Item.Meta>
-                                <Item.Meta>{subcontractor.user.company_email}</Item.Meta>
-                            </Item>
+                            <Card>
+                                <Card.Header><strong>{subcontractor.user.f_name} {subcontractor.user.l_name}</strong></Card.Header>
+                                <Card.Meta>{subcontractor.user.phone}</Card.Meta>
+                                <Card.Meta>{subcontractor.user.email}</Card.Meta>
+                                <Card.Header>Company Info</Card.Header>
+                                <Card.Meta><strong>{subcontractor.user.company}</strong></Card.Meta>
+                                <Card.Meta>{subcontractor.user.company_phone}</Card.Meta>
+                                <Card.Meta>{subcontractor.user.company_email}</Card.Meta>
+                            </Card>
                             )
                         })}
                         
-                    </Grid.Column>
+                    </Card.Group>
                 </Grid.Row>
+                </>
                 : null }
                 
 
                 <Grid.Row columns={1}>
                     <Grid.Column>
-                        <Item>
-                            <Item.Header>Subcontractor Needs</Item.Header>
-                            <Item.Description>{currentProject.sub_needs}</Item.Description>
-                        </Item>
+                            <Header as='h2' textAlign='left'>Subcontractor Needs</Header>
+                            <Header as='h3' textAlign='left'>{currentProject.sub_needs}</Header>
                     </Grid.Column>
                 </Grid.Row>
 
@@ -126,14 +153,8 @@ class ShowProject extends React.Component {
         
         
         )
-    }
+    
 }
 
-const mapStateToProps = state => {
-    return {
-        currentJob: state.currentJob,
-        currentProject: state.currentProject
-    }
-}
 
-export default connect(mapStateToProps)(ShowProject)
+export default ShowProject

@@ -1,6 +1,6 @@
 import React from 'react'
 import { fetchProjects, fetchUserProjects, createProjectItem, groups, keys, updateItemList } from './projectFunctions'
-import TestShowProject from './TestShowProject'
+import ShowProject from './ShowProject'
 import {  withRouter } from 'react-router-dom'
 import EditProject from './EditProject'
 import Loading from '../../Loading'
@@ -108,7 +108,7 @@ class ProjectWindow extends React.Component {
             {this.props.loading ? <Loading/> :
                 <div>
                 { this.props.currentJob.permission === 1 || this.props.currentJob.permission === 2 ?
-                <div className='nav header second'>
+                <div className='nav heading second'>
                     <Button className='left' onClick={this.handleClick}>New Project</Button>
                 </div>
                 : null }
@@ -116,7 +116,10 @@ class ProjectWindow extends React.Component {
                 items={this.props.items}
                 keys={keys}
                 defaultTimeStart={moment().add(-12, 'hour')}
-                defaultTimeEnd={moment().add(12, 'hour')}/>
+                defaultTimeEnd={moment().add(12, 'hour')}
+                sidebarWidth='0'
+                lineHeight='50'
+                />
                 { this.state.view === 'new' ?
                     <NewProject 
                         updateState={this.updateStateFromNew}
@@ -131,7 +134,7 @@ class ProjectWindow extends React.Component {
                             />
                         :
                         this.state.view === 'show' ?
-                            <TestShowProject 
+                            <ShowProject 
                                 showEdit={() => this.setView('edit')} 
                                 projectPermission={this.currentPermission()} 
                                 updateProject={this.updateProject} 

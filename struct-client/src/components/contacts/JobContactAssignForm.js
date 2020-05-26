@@ -24,7 +24,6 @@ class ContactAssignInput extends Component {
         ]
         return(
             <>
-            {/* <Form.Field `}> */}
                 <Form.Dropdown
                     label={`${f_name} ${l_name}`}
                     placeholder={`Give ${f_name} permission`}
@@ -33,9 +32,7 @@ class ContactAssignInput extends Component {
                     options={permissionOptions}
                     onChange={handleChange}
                     value={value}
-                    />
-            {/* </Form.Field> */}
-            
+                    />            
             </>
             
         )
