@@ -48,3 +48,21 @@ export const convertUnixToUserTime = (unix) => {
 }
 //returns pleasantly formatted time
 
+export const convertUnixToState = unix => {
+    const time = new Date(unix)
+    let y, mo, d, h, mi;
+
+    y = time.getFullYear()
+    mo = time.getMonth() + 1
+    d = time.getDate()
+    h = time.getHours()
+    mi = time.getMinutes()
+
+    return {
+        s_year: y,
+        s_month: mo,
+        s_day: d,
+        s_hour: h,
+        s_minute: mi,
+    }
+}

@@ -53,15 +53,18 @@ class EditProject extends React.Component {
     }
 
     contactsWithLowerOrEqualPermissionThanCurrentUser = () => {
-        //filter checkedContacts by permission greater than current user
-        const lowerChecked = [...this.state.checkedContacts].filter( record => 
-            record.permission <= this.props.currentProject.permission)
-        const idsOnlyLowerChecked = lowerChecked.map(contactObj => contactObj.user_id)
-        //filter contacts by contained in filtered checkedContacts
+
+        const userPermission = this.highestPermission()
+        const higherChecked = [...this.state.checkedContacts].filter( record => {
+            return (record.permission < userPermission) || (record.permission === null)
+        })
+        const idsOnlyHigherChecked = higherChecked.map(contactObj => contactObj.user_id)
         return this.props.contacts.filter(contact => 
-            !idsOnlyLowerChecked.includes(contact.id)
-            )
+            !idsOnlyHigherChecked.includes(contact.id)  
+        )
+        //you have a list of contacts without 
     }
+
 
     handleSubmit = e => {
         e.preventDefault()
@@ -82,9 +85,12 @@ class EditProject extends React.Component {
                 job_id: this.props.currentJob.id
             }
             fetchAssignContactsToProject(contactObj, project.id)
-            this.props.updateUsers(this.props.currentJob.id, 'show')
-            this.props.updateState(project)
-            this.props.setView('show')
+            .then(() => {
+                //we are not using return value here; rather, the following steps
+                //need to wait until the fetch is resolved
+                this.props.updateState(project)
+                this.props.updateUsers(this.props.currentJob.id, 'show')
+            })
         })
         .catch(error => console.log(error))
     }
@@ -142,125 +148,134 @@ class EditProject extends React.Component {
             <>
             {this.props.loading ? <Loading/> :
                 <div>
-                <Button onClick={() => this.props.setView('show')}>Back to Project</Button>
-                <h1>Edit Project</h1>
+                <Button className='left' onClick={() => this.props.setView('show')}>Back to Project</Button>
+                <h1 className='page-header'>Edit Project</h1>
                 <Form onSubmit={this.handleSubmit}>
-                    <Form.Input 
-                        label='Title ' 
-                        value={this.state.name} 
-                        name="name" 
-                        onChange={this.handleChange} 
-                        disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
-                        />
                     
-                    <h2>Project Start Time</h2>
                     <Form.Input 
-                        label='Month (MO) ' 
-                        type='integer' 
-                        value={this.state.s_month} 
-                        name="s_month" 
-                        onChange={this.handleChange} 
-                        disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
-                        /><br/>
-                    <Form.Input 
-                        label='Day (DD) ' 
-                        type='integer' 
-                        value={this.state.s_day} 
-                        name="s_day" 
-                        onChange={this.handleChange} 
-                        disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
-                        /><br/>
-                    <Form.Input 
-                        label='Hour (HH) ' 
-                        type='integer' 
-                        value={this.state.s_hour} 
-                        name="s_hour" 
-                        onChange={this.handleChange} 
-                        disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
-                        /><br/>
-                    <Form.Input 
-                        label='Minute (MM) ' 
-                        type='integer' 
-                        value={this.state.s_minute} 
-                        name="s_minute" 
-                        onChange={this.handleChange} 
-                        disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
-                        /><br/>
-                    <Form.Input 
-                        label='Year (YYYY) ' 
-                        type='integer' 
-                        value={this.state.s_year} 
-                        name="s_year" 
-                        onChange={this.handleChange} 
-                        disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
-                        /><br/>
+                    label='Title ' 
+                    value={this.state.name} 
+                    name="name" 
+                    onChange={this.handleChange} 
+                    disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                    />
                     
-                    <h2>Project End Time</h2>
-                    <Form.Input 
-                        label='Month (MO) ' 
-                        type='integer' 
-                        value={this.state.e_month} 
-                        name="e_month" 
-                        onChange={this.handleChange} 
-                        disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
-                        /><br/>
-                    <Form.Input 
-                        label='Day (DD) ' 
-                        type='integer' 
-                        value={this.state.e_day} 
-                        name="e_day" 
-                        onChange={this.handleChange} 
-                        disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
-                        /><br/>
-                    <Form.Input 
-                        label='Hour (HH) ' 
-                        type='integer' 
-                        value={this.state.e_hour} 
-                        name="e_hour" 
-                        onChange={this.handleChange} 
-                        disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
-                        /><br/>
-                    <Form.Input 
-                        label='Minute (MM) ' 
-                        type='integer' 
-                        value={this.state.e_minute} 
-                        name="e_minute" 
-                        onChange={this.handleChange} 
-                        disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
-                        /><br/>
-                    <Form.Input 
-                        label='Year (YYYY) ' 
-                        type='integer' 
-                        value={this.state.e_year} 
-                        name="e_year" 
-                        onChange={this.handleChange} 
-                        disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
-                        /><br/>
+                    
+                    <h2 className='page-header' style={{fontSize: '2em', padding: '1.5em'}}>Project Start Time</h2>
+                    <Form.Group>
+                        <Form.Input width='2'
+                            label='Month (MO) ' 
+                            type='integer' 
+                            value={this.state.s_month} 
+                            name="s_month" 
+                            onChange={this.handleChange} 
+                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            />
+                        <Form.Input width='2'
+                            label='Day (DD) ' 
+                            type='integer' 
+                            value={this.state.s_day} 
+                            name="s_day" 
+                            onChange={this.handleChange} 
+                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            />
+                        <Form.Input width='2'
+                            label='Hour (HH) ' 
+                            type='integer' 
+                            value={this.state.s_hour} 
+                            name="s_hour" 
+                            onChange={this.handleChange} 
+                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            />
+                        <Form.Input width='2'
+                            label='Minute (MM) ' 
+                            type='integer' 
+                            value={this.state.s_minute} 
+                            name="s_minute" 
+                            onChange={this.handleChange} 
+                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            />
+                        <Form.Input width='3'
+                            label='Year (YYYY) ' 
+                            type='integer' 
+                            value={this.state.s_year} 
+                            name="s_year" 
+                            onChange={this.handleChange} 
+                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            />
+                    </Form.Group>
+                    
+                    
+                    <h2 className='page-header' style={{fontSize: '2em', padding: '1.5em'}}>Project End Time</h2>
+                    <Form.Group>
+                        <Form.Input width='2'
+                            label='Month (MO) ' 
+                            type='integer' 
+                            value={this.state.e_month} 
+                            name="e_month" 
+                            onChange={this.handleChange} 
+                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            /><br/>
+                        <Form.Input width='2'
+                            label='Day (DD) ' 
+                            type='integer' 
+                            value={this.state.e_day} 
+                            name="e_day" 
+                            onChange={this.handleChange} 
+                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            /><br/>
+                        <Form.Input width='2'
+                            label='Hour (HH) ' 
+                            type='integer' 
+                            value={this.state.e_hour} 
+                            name="e_hour" 
+                            onChange={this.handleChange} 
+                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            /><br/>
+                        <Form.Input width='2'
+                            label='Minute (MM) ' 
+                            type='integer' 
+                            value={this.state.e_minute} 
+                            name="e_minute" 
+                            onChange={this.handleChange} 
+                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            /><br/>
+                        <Form.Input width='3'
+                            label='Year (YYYY) ' 
+                            type='integer' 
+                            value={this.state.e_year} 
+                            name="e_year" 
+                            onChange={this.handleChange} 
+                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            /><br/>
+                    </Form.Group>
 
-                    <h2> Subcontractor Requirements (optional) </h2>
+                    <h2 className='page-header' style={{fontSize: '2em', padding: '1.5em'}}> Subcontractor Requirements (optional) </h2>
                     <Form.Input value={this.state.sub_needs} name='sub_needs' onChange={this.handleChange} /><br/>
 
-                    <h2>Project Status</h2>
+                    <h2 className='page-header' style={{fontSize: '2em', padding: '1.5em'}}>Project Status</h2>
                     <Form.Dropdown 
                         placeholder='Select Status'
                         fluid
-                        seletion='true'
+                        selection='true'
                         options={statusOptions}
                         onChange={this.handleDropdown}
                         disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
-                    /><br/><br/>
+                    />
                     {this.contactsWithLowerOrEqualPermissionThanCurrentUser().length > 0 ?
                         <>
-                        <h2>Add Users to This Project </h2>
+                        <h2 className='page-header' style={{fontSize: '2em', padding: '1.5em'}}>Add Users to This Project </h2>
+                        <Form.Group>
                         {this.contactsWithLowerOrEqualPermissionThanCurrentUser().map(contact => 
                             <ProjectContactAssignForm 
+                            key={`contact ${contact.id}`}
                             contact={contact}
                             permission={this.highestPermission()}
                             handleChange={this.handleContactChange} 
                             checkedContacts={this.state.checkedContacts}
                             value={this.dropdownValue(contact.id)}
                             />)}
-                        
+                        </Form.Group>
                         </>
                     : null}
                     <Form.Input type='submit' value='Update' />

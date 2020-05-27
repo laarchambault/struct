@@ -6,8 +6,8 @@ import EditProject from './EditProject'
 import Loading from '../../Loading'
 // import { convertUnixToUserDate, convertUnixToUserTime } from '../../calculations/timeConversions'
 import { connect } from 'react-redux'
-import { Button } from 'semantic-ui-react'
-import Timeline from 'react-calendar-timeline'
+import { Button, Header } from 'semantic-ui-react'
+import Timeline, { TimelineHeaders, DateHeader } from 'react-calendar-timeline'
 import 'react-calendar-timeline/lib/Timeline.css'
 import NewProject from './NewProject'
 import moment from 'moment'
@@ -15,7 +15,10 @@ import moment from 'moment'
 
 class ProjectWindow extends React.Component {
 
-    state={ view: '' }
+    state={ 
+        view: '',
+        newStartTime: ''
+    }
 
     setView = view => {
         this.setState({view: view})
@@ -25,12 +28,18 @@ class ProjectWindow extends React.Component {
         this.setView('new')
     }
 
-    handleDoubleClick = e => {
-        const projId = parseInt(e.currentTarget.title, 10)
+    itemSelectCallback = (itemId, e) => {
+        const projId = itemId
         const project = this.props.currentJobProjects.find(project => project.id === projId)
         this.props.setCurrentProject(project)
         this.setView('show')
     }
+
+    handleCanvasClick = (groupId, time, e) => {
+        this.setState({newStartTime: time})
+        this.setView('new')
+    }
+
 
     fetchUserProjectsAndSetState = (jobId, updView=this.state.view) => {
         fetchUserProjects(jobId)
@@ -48,7 +57,7 @@ class ProjectWindow extends React.Component {
         fetchProjects(this.props.currentJob.id)
         .then(projects => {
             let items = projects.map( project => {
-                return createProjectItem(project, this.handleDoubleClick)
+                return createProjectItem(project)
             })
             this.props.setCurrentJobProjects(projects)
             this.props.setItems(items)
@@ -68,7 +77,7 @@ class ProjectWindow extends React.Component {
     }
 
     updateItems = project => {
-        let updItem = createProjectItem(project, this.handleDoubleClick)
+        let updItem = createProjectItem(project)
         let itemArr = updateItemList(this.props.items, updItem, project.id)
         this.props.setItems(itemArr)
     }
@@ -83,7 +92,7 @@ class ProjectWindow extends React.Component {
     }
 
     updateStateFromNew = project => {
-        let newItem = createProjectItem(project, this.handleDoubleClick)
+        let newItem = createProjectItem(project)
         let itemArr = [...this.props.items, newItem]
         let projArr = [...this.props.currentJobProjects, project]
         this.props.setItems(itemArr)
@@ -102,6 +111,51 @@ class ProjectWindow extends React.Component {
         } 
     }
 
+    handleItemMove = (itemId, dragTime, newGroupOrder) => {
+        //fetch request to update start and end times by number of milliseconds different in dragTime
+        fetch(`http://localhost:3000/projects/${itemId}/move`, {
+            method: 'PATCH',
+            credentials: "include",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({newStart: dragTime})
+        })
+        .then(r => {
+            if(r.ok) {
+                return r.json()
+            } else {
+                throw r
+            }
+        })
+        .then( project => {
+            this.updateFromEdit(project)
+        })
+    }
+
+    handleItemResize = (itemId, time, edge) => {
+        fetch(`http://localhost:3000/projects/${itemId}/resize`, {
+            method: 'PATCH',
+            credentials: "include",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({time: time, edge: edge})
+        })
+        .then(r => {
+            if(r.ok) {
+                return r.json()
+            } else {
+                throw r
+            }
+        })
+        .then( project => {
+            this.updateFromEdit(project)
+        })
+    }
+
+
+
     render() {
         return(
         <>
@@ -112,19 +166,43 @@ class ProjectWindow extends React.Component {
                     <Button className='left' onClick={this.handleClick}>New Project</Button>
                 </div>
                 : null }
-                <Timeline groups={groups} //'groups' and 'keys' are defined in helper functions
-                items={this.props.items}
-                keys={keys}
-                defaultTimeStart={moment().add(-12, 'hour')}
-                defaultTimeEnd={moment().add(12, 'hour')}
-                sidebarWidth='0'
-                lineHeight='50'
-                />
+                <div className='nav heading'>
+                    <Header as='h1' floated='left'>{this.props.currentJob.name}</Header>
+                    <div className='pad-top'>
+                        <Header as='h3' floated='left'>{this.props.currentJob.street_address}</Header>
+                        <Header as='h3' floated='left'>{this.props.currentJob.city}</Header>
+                        <Header as='h3' floated='left'>{this.props.currentJob.state}</Header>
+                    </div>
+                </div>
+                <div className='timeline'>
+                    <Timeline groups={groups} //'groups' and 'keys' are defined in helper functions
+                        items={this.props.items}
+                        keys={keys}
+                        defaultTimeStart={moment().add(-12, 'hour')}
+                        defaultTimeEnd={moment().add(12, 'hour')}
+                        sidebarWidth={0}
+                        lineHeight={50}
+                        onItemSelect={this.itemSelectCallback}
+                        onCanvasClick={this.handleCanvasClick}
+                        onItemMove={this.handleItemMove}
+                        onItemResize={this.handleItemResize}
+                        >
+                        <TimelineHeaders>
+                            <DateHeader
+                                className='calendar-header'
+                                unit="primaryHeader"
+                                />
+                            <DateHeader />
+                        </TimelineHeaders>
+                    </Timeline>
+                </div>
+                
                 { this.state.view === 'new' ?
                     <NewProject 
                         updateState={this.updateStateFromNew}
                         updateUsers={this.fetchUserProjectsAndSetState}
                         setView={this.setView}
+                        startTime={this.state.newStartTime}
                         /> 
                 : this.state.view === 'edit' ?
                         <EditProject 
@@ -136,7 +214,6 @@ class ProjectWindow extends React.Component {
                         this.state.view === 'show' ?
                             <ShowProject 
                                 showEdit={() => this.setView('edit')} 
-                                projectPermission={this.currentPermission()} 
                                 updateProject={this.updateProject} 
                                 />
                         : null }

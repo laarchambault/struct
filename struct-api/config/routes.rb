@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   get '/projects/:id/subcontractors', to: 'projects#show_subcontractors'
   get 'projects/:id/builders', to: 'projects#show_builders'
   post '/projects/permission', to: 'projects#projects_with_permission'
+  patch '/projects/:id/move', to: 'projects#update_from_timeline_drag'
+  patch 'projects/:id/resize', to: 'projects#update_from_timeline_resize'
   resources :projects, only: [:create, :update, :index]
 
   get '/jobs/:id/projects', to: 'jobs#projects'

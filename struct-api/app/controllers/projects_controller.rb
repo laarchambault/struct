@@ -24,8 +24,10 @@ class ProjectsController < ApplicationController
     def create
         project = Project.new(project_params)
         if project.save
-            UserProject.create(user_id: session[:user_id], project_id: project.id, permission: 1)
-            render json: project, status: :created
+            user_project = UserProject.create(user_id: session[:user_id], project_id: project.id, permission: 1)
+            copy_project = project.as_json
+            copy_project["permission"] = 1
+            render json: copy_project, status: :created
         else
             render json: {errors: project.errors.full_messages }, status: :bad_request
         end
@@ -36,10 +38,46 @@ class ProjectsController < ApplicationController
         project.update(project_params)
 
         if project.save
-            render json: project
+            user_project = UserProject.find_by(user_id: session[:user_id], project_id: project.id)
+            copy_project = project.as_json
+            copy_project["permission"] = user_project.permission
+            render json: copy_project
         else
             render json: {error: "unable to update"}, status: :bad_request
         end
+    end
+
+    def update_from_timeline_drag
+        project = Project.find_by(id: params[:id])
+        new_start = params[:newStart]
+        
+        time_difference = project.start_time.to_i - new_start
+        s = project.start_time.to_i - time_difference
+        e = project.end_time.to_i - time_difference
+        project.start_time = s.to_s
+        project.end_time = e.to_s
+        project.save
+        user_project = UserProject.find_by(user_id: session[:user_id], project_id: project.id)
+        copy_project = project.as_json
+        copy_project["permission"] = user_project.permission
+        render json: copy_project
+
+    end
+
+    def update_from_timeline_resize
+        project = Project.find_by(id: params[:id])
+        time = params[:time]
+
+        if params[:edge] == 'left'
+            project.start_time = time.to_s
+        elsif params[:edge] == 'right'
+            project.end_time = time.to_s
+        end
+        project.save
+        user_project = UserProject.find_by(user_id: session[:user_id], project_id: project.id)
+        copy_project = project.as_json
+        copy_project["permission"] = user_project.permission
+        render json: copy_project
     end
 
     def show_subcontractors

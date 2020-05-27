@@ -103,17 +103,20 @@ export const getBuildersForProject = (projectId) => {
     })
 }
 
-export const createProjectItem  = (project, doubleClickCallback) => {
+export const createProjectItem  = (project) => {
     return {
         id: project.id,
         group: 1,
         title: project.name,
         canMove: 'true',
-        canResize: 'false',
+        canResize: 'both',
         start_time: parseInt(project.start_time, 10),
         end_time: parseInt(project.end_time, 10),
         itemProps: {
-            onDoubleClick: doubleClickCallback
+            style:  {
+                background: '#f6853f',
+                border: 'none'
+            }
         }
     }
 }

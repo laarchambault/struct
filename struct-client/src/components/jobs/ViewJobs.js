@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import JobCard from './JobCard'
+import { connect } from 'react-redux'
 import { Card } from 'semantic-ui-react'
-
-// import { connect } from 'react-redux'
 
 class ViewJobs extends Component {
 
@@ -17,7 +16,7 @@ class ViewJobs extends Component {
             :
                 <>
                     <h2 className={'page-header'}>ALL JOBS</h2>
-                    <Card.Group stackable className='job-cards' >
+                    <Card.Group centered stackable className='job-cards' >
                         {this.props.jobs.map(job => <JobCard job={job} key={job.id}/>)}
                     </Card.Group>
                 </>
@@ -29,4 +28,10 @@ class ViewJobs extends Component {
     }
 }
 
-export default ViewJobs
+const mapStateToProps = state => {
+    return {
+        jobs: state.jobs,
+    }
+}
+
+export default connect(mapStateToProps)(ViewJobs)

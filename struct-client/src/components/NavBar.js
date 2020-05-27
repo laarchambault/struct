@@ -29,6 +29,7 @@ const NavBar = props => {
             { currentUser ? 
                 <>
                 <Image id='nav-logo' src={structLogo} alt='struct logo' />
+                <Button className='left' onClick={() => props.history.push('/jobs')}>Home</Button>
                 <Button className='left' onClick={() => props.history.push('/contacts')}>Contacts</Button>
                 { currentJob ? 
                     <>

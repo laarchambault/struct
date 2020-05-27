@@ -47,11 +47,17 @@ const ShowProject = props => {
 
 
     const highestPermission = () => {
-        if(currentJob.permission > props.projectPermission) {
+
+        if(Number.isInteger(currentJob.permission) && Number.isInteger(currentProject.permission)) {
+            return (currentJob.permission > currentProject.permission ?  currentJob.permission :  currentProject.permission)
+        } else if(Number.isInteger(currentJob.permission) && !Number.isInteger(currentProject.permission)) {
             return currentJob.permission
-        } else {
-            return props.projectPermission
+        } else if(!Number.isInteger(currentJob.permission) && Number.isInteger(currentProject.permission)) {
+            return currentProject.permission
+        } else if(!Number.isInteger(currentJob.permission) && !Number.isInteger(currentProject.permission)) {
+            return null
         }
+
     }
 
     const { showEdit } = props
@@ -71,7 +77,8 @@ const ShowProject = props => {
                     <Header as='h3'>Builder Info</Header>
                         { builders.map(builder => {
                             return (
-                            <Item>
+                                <>
+                            <Item className='builder-item'>
                                 <Item.Header><strong>{builder.user.f_name} {builder.user.l_name}</strong></Item.Header>
                                 <Item.Meta>{builder.user.phone}</Item.Meta>
                                 <Item.Meta>{builder.user.email}</Item.Meta>
@@ -79,7 +86,8 @@ const ShowProject = props => {
                                 <Item.Meta><strong>{builder.user.company}</strong></Item.Meta>
                                 <Item.Meta>{builder.user.company_phone}</Item.Meta>
                                 <Item.Meta>{builder.user.company_email}</Item.Meta>
-                            </Item>
+                            </Item><br/>
+                            </>
                             )
                         })}
                     </Grid.Column>

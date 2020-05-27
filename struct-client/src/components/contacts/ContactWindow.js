@@ -2,7 +2,7 @@ import React from 'react'
 import ContactCard from './ContactCard'
 import RequestCard from './RequestCard'
 import NewContact from './NewContact'
-import { Button } from 'semantic-ui-react'
+import { Button, Card } from 'semantic-ui-react'
 
 class ContactWindow extends React.Component {
     state={
@@ -41,16 +41,24 @@ class ContactWindow extends React.Component {
     render() {
         return(
             <div>
-                <Button onClick={this.toggleNewContactForm}>Add New Contact</Button>
+                <div className='nav heading second'>
+                    <Button className='left' onClick={this.toggleNewContactForm}>Add New Contact</Button>
+                </div>
                 {this.state.viewContactForm ? <NewContact hideNewContactForm={this.toggleNewContactForm} /> : null }
                 {this.state.request_contacts.length > 0 ?
                     <>
-                    <h1>New Contact Requests</h1>
-                    {this.state.request_contacts.map(contact => <RequestCard contact={contact} updateContacts={this.fetchContactsAndSetState}/> )}
+                    <h2 className='page-header' style={{fontSize: '2em', padding: '1.5em'}}>New Contact Requests</h2>
+                    <Card.Group centered>
+                        {this.state.request_contacts.map(contact => 
+                            <RequestCard contact={contact} updateContacts={this.fetchContactsAndSetState}/> )}
+                    </Card.Group>
                     </>
                 : null}
-                <h1>All Contacts</h1>
-                {this.state.approved_contacts.map(contact => <ContactCard contact={contact} updateContacts={this.fetchContactsAndSetState}/>)}
+                <h2 className='page-header' style={{fontSize: '2em', padding: '1.5em'}}>All Contacts</h2>
+                <Card.Group centered>
+                    {this.state.approved_contacts.map(contact => 
+                        <ContactCard contact={contact} updateContacts={this.fetchContactsAndSetState}/>)}
+                </Card.Group>
             </div>
         )
     }

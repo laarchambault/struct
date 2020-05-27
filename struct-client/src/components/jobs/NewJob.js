@@ -71,15 +71,13 @@ class NewJob extends Component {
             <div>
                 <h1 className='page-header'>Enter Job Details</h1>
                 <Form onSubmit={this.handleSubmit}>
-                    <Form.Group width='4'>
-                        <Form.Field>
-                            <label> Job Name</label>
-                            <input type='text' value={this.state.name} name="name" onChange={this.handleChange}/>
-                        </Form.Field>
-                    </Form.Group>
+                    <Form.Field>
+                        <label> Job Name</label>
+                        <input type='text' value={this.state.name} name="name" onChange={this.handleChange}/>
+                    </Form.Field>
                     <br/>
                     <Form.Group >
-                        <Form.Field width='4'>
+                        <Form.Field width='5'>
                             <label>Street Address</label>
                             <input type='text' value={this.state.street_address} name="street_address" onChange={this.handleChange}/>
                         </Form.Field>

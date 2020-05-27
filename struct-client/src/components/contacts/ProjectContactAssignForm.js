@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Form } from 'semantic-ui-react'
 import { permissionOptions, subPermissionOptions } from './contactHelpers'
 
-class ContactAssignInput extends Component {
+class ProjectContactAssignForm extends Component {
     render() {
         let {f_name, l_name, id} = this.props.contact
         let { handleChange, permission, value } = this.props
@@ -24,4 +24,4 @@ class ContactAssignInput extends Component {
     }
 }
 
-export default ContactAssignInput
+export default ProjectContactAssignForm

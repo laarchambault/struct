@@ -5,7 +5,9 @@ class JobsController < ApplicationController
         user = User.find_by(id: session[:user_id])
         if user && job.valid?
             user_job = UserJob.create(user_id: user.id, job_id: job.id, permission: params[:permission])
-            render json: job, status: :created
+            copy_job = job.as_json
+            copy_job["permission"] = params[:permission]
+            render json: copy_job, status: :created
         else
             render json: {errors: job.errors.full_messages }, status: :bad_request
         end
@@ -14,9 +16,11 @@ class JobsController < ApplicationController
     def update
         job = Job.find_by(id: params[:id])
         job.update(job_params)
-
         if job.valid?
-            render json: job
+            user_job = UserJob.find_by(user_id: session[:user_id], job_id: job.id)
+            copy_job = job.as_json
+            copy_job["permission"] = user_job.permission
+            render json: copy_job
         else
             render json: {error: "unable to update"}, status: :bad_request
         end
@@ -25,10 +29,10 @@ class JobsController < ApplicationController
 
     def projects
         job = Job.find_by(id: params[:id])
-
         if job 
             projects = job.projects
             projects_with_permissions = []
+
             projects.each do |project|
                 user_project = UserProject.find_by(user_id: session[:user_id], project_id: project.id)
                 copy_project = project.as_json
@@ -42,6 +46,7 @@ class JobsController < ApplicationController
             end
             render json: projects_with_permissions
         else
+            byebug
             render json: {error: "Unable to fetch projects"}, status: :not_found
         end
     end

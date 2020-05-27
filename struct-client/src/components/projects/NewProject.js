@@ -1,5 +1,5 @@
 import React from 'react'
-import { convertUserToUnix } from '../../calculations/timeConversions.js'
+import { convertUserToUnix, convertUnixToState } from '../../calculations/timeConversions.js'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { Form, Button } from 'semantic-ui-react'
@@ -34,6 +34,12 @@ class NewProject extends React.Component {
         this.setState({ status: e.target.innerText})
     }
 
+    componentDidMount = () => {
+        if(Number.isInteger(this.props.startTime)) {
+            this.setState(convertUnixToState(this.props.startTime))
+        }
+    }
+
     handleSubmit = e => {
         e.preventDefault()
         const startUnix = convertUserToUnix('start', this.state)
@@ -62,6 +68,7 @@ class NewProject extends React.Component {
             }
         })
         .then(project => {
+            console.log(project)
             const contactObj = {
                 checkedContacts: this.state.checkedContacts, 
                 job_id: this.props.currentJob.id
@@ -117,15 +124,12 @@ class NewProject extends React.Component {
                     : <Button className='left' onClick={() => this.props.setView('')}>Back to {this.props.currentJob.name}</Button>}
                 <h1 className='page-header'>Create New Project</h1>
                 <Form onSubmit={this.handleSubmit}>
-                    <Form.Group width='4'>
-                        <Form.Input 
-                        label='Title' 
-                        value={this.state.name} 
-                        name="name" 
-                        onChange={this.handleChange} 
-                        />
-                    </Form.Group>
-                    
+                    <Form.Input 
+                    label='Title' 
+                    value={this.state.name} 
+                    name="name" 
+                    onChange={this.handleChange} 
+                    />
                     
                     <h2 className='page-header' style={{fontSize: '2em', padding: '1.5em'}}>Project Start Time</h2>
                     <Form.Group >
@@ -169,41 +173,41 @@ class NewProject extends React.Component {
                     
                     <h2 className='page-header' style={{fontSize: '2em', padding: '1.5em'}}>Project End Time</h2>
                     <Form.Group>
-                    <Form.Input 
-                        label='Month (MO) ' 
-                        type='integer' 
-                        value={this.state.e_month} 
-                        name="e_month" 
-                        onChange={this.handleChange} 
-                        />
-                    <Form.Input width='2'
-                        label='Day (DD) ' 
-                        type='integer' 
-                        value={this.state.e_day} 
-                        name="e_day" 
-                        onChange={this.handleChange} 
-                        />
-                    <Form.Input width='2'
-                        label='Hour (HH) ' 
-                        type='integer' 
-                        value={this.state.e_hour} 
-                        name="e_hour" 
-                        onChange={this.handleChange} 
-                        />
-                    <Form.Input width='2'
-                        label='Minute (MM) ' 
-                        type='integer' 
-                        value={this.state.e_minute} 
-                        name="e_minute" 
-                        onChange={this.handleChange} 
-                        />
-                    <Form.Input width='3'
-                        label='Year (YYYY) ' 
-                        type='integer' 
-                        value={this.state.e_year} 
-                        name="e_year" 
-                        onChange={this.handleChange} 
-                        />
+                        <Form.Input width='2'
+                            label='Month (MO) ' 
+                            type='integer' 
+                            value={this.state.e_month} 
+                            name="e_month" 
+                            onChange={this.handleChange} 
+                            />
+                        <Form.Input width='2'
+                            label='Day (DD) ' 
+                            type='integer' 
+                            value={this.state.e_day} 
+                            name="e_day" 
+                            onChange={this.handleChange} 
+                            />
+                        <Form.Input width='2'
+                            label='Hour (HH) ' 
+                            type='integer' 
+                            value={this.state.e_hour} 
+                            name="e_hour" 
+                            onChange={this.handleChange} 
+                            />
+                        <Form.Input width='2'
+                            label='Minute (MM) ' 
+                            type='integer' 
+                            value={this.state.e_minute} 
+                            name="e_minute" 
+                            onChange={this.handleChange} 
+                            />
+                        <Form.Input width='3'
+                            label='Year (YYYY) ' 
+                            type='integer' 
+                            value={this.state.e_year} 
+                            name="e_year" 
+                            onChange={this.handleChange} 
+                            />
                     </Form.Group>
 
 
@@ -214,7 +218,7 @@ class NewProject extends React.Component {
                     <Form.Dropdown 
                         label='Select Status'
                         fluid
-                        seletion='true'
+                        selection='true'
                         options={statusOptions}
                         onChange={this.handleDropdown}
                         value={this.state.status}

@@ -10,9 +10,6 @@ body, html {
   text-align: center;
 }
 
-
-
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -64,6 +61,10 @@ button.ui.button.left {
   float: left;
 }
 
+div.ui.centered.cards.job-cards {
+  margin-top: 50px;
+}
+
 div.ui.stackable.cards.job-cards div.content {
   background-color: #f5f3e6;
 }
@@ -111,6 +112,14 @@ div.nav.top.heading button.ui.button {
   padding: 10px 10px 10px 155px;
 }
 
+.nav.heading h3 {
+  margin-left: 10px
+}
+
+.nav.heading .pad-top {
+  padding-top: 10px;
+}
+
 #loading {
   width: 150px;
   height: 150px;
@@ -138,4 +147,15 @@ form.ui.form {
 #show-project button {
   background-color: #116b6e;
   color: #f5f3e6
+}
+.react-calendar-timeline .rct-horizontal-lines div.rct-hl-even {
+  background-color: #f5f3e6;
+}
+
+.timeline {
+  padding-top: 40px
+}
+
+.calendar-header {
+  background-color:rgb(148, 147, 147)
 }

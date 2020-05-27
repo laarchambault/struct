@@ -53,7 +53,7 @@ class JobsContainer extends Component {
                         <Button className='left' onClick={this.toggleView}>{ this.state.viewAll ? "Create Job" : "Return to All Jobs"}</Button>
                     </div>
                     { this.state.viewAll ? 
-                        <ViewJobs userId={this.props.userId} jobs={this.props.jobs}/> 
+                        <ViewJobs/> 
                     : 
                         <NewJob userId={this.props.userId} addJob={this.addJob}/>}
                 </div>

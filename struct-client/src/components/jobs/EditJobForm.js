@@ -58,11 +58,8 @@ class EditJobForm extends Component {
         const id = this.props.currentJob.id
         fetchEditJob(id, this.state)
         .then(job => {
-            console.log("this.props.jobs: ", this.props.jobs)
             const newJobs = [...this.props.jobs]
             const i = newJobs.findIndex(listedJob => listedJob.id === job.id)
-            console.log("i: ", i)
-            console.log("newJobs: ", newJobs)
             newJobs[i] = job
             this.props.updateJobs(newJobs)
             if(this.state.checkedContacts.length > 0) {
@@ -115,12 +112,10 @@ class EditJobForm extends Component {
                     <div>
                     <h1 className='page-header'>Enter Job Details</h1>
                         <Form onSubmit={this.handleSubmit}>
-                        <Form.Group width='4'>
                             <Form.Field>
                                 <label> Job Name</label>
                                 <input type='text' value={this.state.name} name="name" onChange={this.handleChange}/>
                             </Form.Field>
-                        </Form.Group>
                         <br/>
                         <Form.Group >
                             <Form.Field width='4'>
