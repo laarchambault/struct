@@ -53,12 +53,14 @@ class EditProject extends React.Component {
     }
 
     contactsWithLowerOrEqualPermissionThanCurrentUser = () => {
-
         const userPermission = this.highestPermission()
+        debugger
         const higherChecked = [...this.state.checkedContacts].filter( record => {
             return (record.permission < userPermission) || (record.permission === null)
         })
+        debugger
         const idsOnlyHigherChecked = higherChecked.map(contactObj => contactObj.user_id)
+        debugger
         return this.props.contacts.filter(contact => 
             !idsOnlyHigherChecked.includes(contact.id)  
         )
@@ -136,10 +138,14 @@ class EditProject extends React.Component {
     }
 
     highestPermission = () => {
-        if(this.props.currentJob.permission > this.props.currentProject.permission) {
+        if(Number.isInteger(this.props.currentJob.permission) && Number.isInteger(this.props.currentProject.permission)) {
+            return (this.props.currentJob.permission > this.props.currentProject.permission ?  this.props.currentJob.permission :  this.props.currentProject.permission)
+        } else if(Number.isInteger(this.props.currentJob.permission) && !Number.isInteger(this.props.currentProject.permission)) {
             return this.props.currentJob.permission
-        } else {
+        } else if(!Number.isInteger(this.props.currentJob.permission) && Number.isInteger(this.props.currentProject.permission)) {
             return this.props.currentProject.permission
+        } else if(!Number.isInteger(this.props.currentJob.permission) && !Number.isInteger(this.props.currentProject.permission)) {
+            return null
         }
     }
 

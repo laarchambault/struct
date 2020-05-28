@@ -31,6 +31,7 @@ class NewContact extends React.Component {
         .then(r => {
 
             alert(r.msg)
+            
             this.props.hideNewContactForm()
         })
         .catch(console.error)

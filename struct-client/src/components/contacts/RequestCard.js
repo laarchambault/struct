@@ -1,5 +1,7 @@
 import React from 'react'
 import { Card, Button, Icon } from 'semantic-ui-react'
+import { connect } from 'react-redux'
+import { fetchContactsAndSetState } from './contactHelpers'
 
 class RequestCard extends React.Component {
     
@@ -28,6 +30,11 @@ class RequestCard extends React.Component {
         })
         .then(r => {
             this.props.updateContacts()
+            .then(contactObj => {
+                this.props.setApprovedAndRequestContacts(contactObj)
+                fetchContactsAndSetState(this.props.addContacts)
+            })
+            
         })
         .catch(console.error)
     }
@@ -57,4 +64,17 @@ class RequestCard extends React.Component {
     }
 }
 
-export default RequestCard
+const mapStateToProps = state => {
+    return {
+        contacts: state.contacts
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        addContacts: contacts => dispatch({type: 'SET_CONTACTS', contacts})
+    }
+    
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(RequestCard)

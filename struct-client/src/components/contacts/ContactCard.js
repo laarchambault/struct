@@ -23,6 +23,7 @@ class ContactCard extends React.Component {
         })
         .then(r => {
             this.props.updateContacts()
+            this.props.setApprovedAndRequestContacts()
         })
         .catch(console.error)
     }
