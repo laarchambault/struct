@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import swal from 'sweetalert'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import {Form, Button} from 'semantic-ui-react'
@@ -47,10 +48,16 @@ class SignupForm extends Component {
         })
         .catch(error => {
             console.error(error)
-            alert("Unable to create account.")
+            swal({
+                title: "Unable to create account",
+                icon: "error"
+            })
         })
         } else {
-            alert("Passwords do not match")
+            swal({
+                title: "Passwords do not match",
+                icon: "error"
+            })
         }  
         
 
@@ -58,7 +65,8 @@ class SignupForm extends Component {
     
     render() {
         return(
-            <Form onSubmit={this.handleSubmit}>
+            <Form onSubmit={this.handleSubmit} >
+                <input type="hidden" value="something"/>
                 <Form.Group widths='equal'>
                     <Form.Field>
                         <label>First Name: </label>

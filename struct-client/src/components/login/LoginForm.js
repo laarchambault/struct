@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import swal from 'sweetalert'
 import { fetchContactsAndSetState } from '../contacts/contactHelpers'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
@@ -41,7 +42,10 @@ class LoginForm extends Component {
             this.props.history.push('/jobs')
 
         })
-        .catch(r => alert("Invalid login. Please try again or create an account."))
+        .catch(r => swal({
+            title: "Invalid login. Please try again or create an account",
+            icon: "error"
+        }))
     }
 
     render() {

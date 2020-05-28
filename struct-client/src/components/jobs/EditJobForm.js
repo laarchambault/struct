@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import swal from 'sweetalert'
 import JobContactAssignForm from '../contacts/JobContactAssignForm.js'
 import { Form, Button } from 'semantic-ui-react'
 import Loading from '../../Loading'
@@ -67,7 +68,10 @@ class EditJobForm extends Component {
                 .then(r => {
                     this.props.history.push(`/jobs/${job.id}`)
                 })
-                .catch(error => alert("Unable to show updates. Please refresh page"))
+                .catch(error => swal({
+                    title: "Unable to show updates. Please refresh page",
+                    icon: "error"
+                }))
             }
             
         })
@@ -111,7 +115,7 @@ class EditJobForm extends Component {
                 {this.props.loading ? <Loading /> : 
                     <div>
                     <h1 className='page-header'>Enter Job Details</h1>
-                        <Form onSubmit={this.handleSubmit}>
+                        <Form onSubmit={this.handleSubmit} autocomplete="off">
                             <Form.Field>
                                 <label> Job Name</label>
                                 <input type='text' value={this.state.name} name="name" onChange={this.handleChange}/>

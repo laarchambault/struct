@@ -123,7 +123,7 @@ class NewProject extends React.Component {
                     <Button className='left' onClick={() => this.props.setView('show')}>Back to Project</Button>
                     : <Button className='left' onClick={() => this.props.setView('')}>Back to {this.props.currentJob.name}</Button>}
                 <h1 className='page-header'>Create New Project</h1>
-                <Form onSubmit={this.handleSubmit}>
+                <Form onSubmit={this.handleSubmit} autocomplete="off">
                     <Form.Input 
                     label='Title' 
                     value={this.state.name} 

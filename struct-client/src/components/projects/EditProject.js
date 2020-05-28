@@ -156,7 +156,7 @@ class EditProject extends React.Component {
                 <div>
                 <Button className='left' onClick={() => this.props.setView('show')}>Back to Project</Button>
                 <h1 className='page-header'>Edit Project</h1>
-                <Form onSubmit={this.handleSubmit}>
+                <Form onSubmit={this.handleSubmit} autocomplete="off">
                     
                     <Form.Input 
                     label='Title ' 

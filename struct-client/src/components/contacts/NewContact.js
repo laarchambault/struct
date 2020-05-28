@@ -1,6 +1,7 @@
 
 
 import React from 'react'
+import swal from 'sweetalert'
 import { Input, Form, Button } from 'semantic-ui-react'
 
 class NewContact extends React.Component {
@@ -30,7 +31,10 @@ class NewContact extends React.Component {
         })
         .then(r => {
 
-            alert(r.msg)
+            swal({
+                title: r.msg,
+                icon: "info"
+            })
             
             this.props.hideNewContactForm()
         })

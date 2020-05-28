@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import swal from 'sweetalert'
 import { connect } from 'react-redux'
 import { Form, Button } from 'semantic-ui-react'
 import { withRouter } from 'react-router-dom'
@@ -27,7 +28,10 @@ class NewJob extends Component {
             this.props.addJob(job)
             this.props.history.push('/jobs')
         })
-        .catch(error => alert(error))
+        .catch(error => swal({
+            title: error,
+            icon: "error"
+        }))
         
     }
 
@@ -70,7 +74,7 @@ class NewJob extends Component {
         return(
             <div>
                 <h1 className='page-header'>Enter Job Details</h1>
-                <Form onSubmit={this.handleSubmit}>
+                <Form onSubmit={this.handleSubmit} autocomplete="off">
                     <Form.Field>
                         <label> Job Name</label>
                         <input type='text' value={this.state.name} name="name" onChange={this.handleChange}/>

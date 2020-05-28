@@ -71,7 +71,7 @@ class EditUser extends Component {
 
     render() {
         return(
-            <Form onSubmit={this.handleSubmit}>
+            <Form onSubmit={this.handleSubmit} autocomplete="off">
                 <Form.Group>
                     <Form.Field
                     control={Input}
