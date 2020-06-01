@@ -3,7 +3,7 @@ A construction site planning tool. Struct makes it easy for builders to plan and
 
 # Current Features
 1. Login with user authentication
-2. Add a contact by entering email address. This initializes a request contact. Once approved, builders/subcontractors can use their list of contacts to add users to a job or project
+2. Add a contact by entering email address. This initializes a contact request. Once approved, builders/subcontractors can use their list of contacts to add users to a job or project
 3. Create Jobs
 Each job site, or collection of tasks to be managed, is called a 'job'. Builders (or any user) may create a job. Each job utilizes a timeline to display all of the projects (sub-task) related to the job.
 4. Project Management
