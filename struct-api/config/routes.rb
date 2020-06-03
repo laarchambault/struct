@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   resources :projects, only: [:create, :update, :index]
 
   get '/jobs/:id/projects', to: 'jobs#projects'
+  get '/jobs/:id/delete', to: 'jobs#delete'
   resources :jobs, only: [:create, :update]
   
   get '/jobs/:id/contacts', to: 'user_jobs#show_job_contacts'

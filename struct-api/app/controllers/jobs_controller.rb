@@ -51,6 +51,19 @@ class JobsController < ApplicationController
         end
     end
 
+    def delete
+        job = Job.find_by(id: params[:id])
+        user = User.find_by(id: session[:user_id])
+        user_job = UserJob.find_by(job_id: job.id, user_id: user.id)
+        
+        if user_job.permission == 1
+            job.destroy
+            render json: {msg: 'Job deleted'}
+        else
+            render json: {msg: 'Unable to delete job'}
+        end
+    end
+
     private
     def job_params
         params.require(:job).permit(:name, :street_address, :city, :state)

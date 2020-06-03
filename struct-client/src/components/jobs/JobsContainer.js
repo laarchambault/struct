@@ -4,11 +4,13 @@ import NewJob from './NewJob'
 import Loading from '../../Loading'
 import { connect } from 'react-redux'
 import { Button } from 'semantic-ui-react'
+import { fetchJobsAndSetState } from './fetches'
 
 class JobsContainer extends Component {
     state={
         viewAll: true,
     }
+
 
     componentDidMount() {
         this.props.toggleLoad()
@@ -16,21 +18,7 @@ class JobsContainer extends Component {
         this.props.setCurrentProject('')
         this.props.setItems([])
         this.props.setUserProjects([])
-        fetch(`http://localhost:3000/users/${this.props.userId}`, {
-            credentials: 'include'
-        })
-        .then(r => {
-            if(r.ok) {
-                return r.json()
-            } else {
-                throw r
-            }
-        })
-        .then(user => {
-            this.props.updateJobs(user.jobs)
-            this.props.toggleLoad()
-        })
-        .catch(() => this.props.toggleLoad())
+        fetchJobsAndSetState(this.props.userId, this.props.toggleLoad, this.props.updateJobs)
     }
 
 

@@ -44,7 +44,6 @@ class SignupForm extends Component {
         .then(data => {
             this.props.submitSignup(data.id)
             this.props.history.push('/jobs')
-
         })
         .catch(error => {
             console.error(error)

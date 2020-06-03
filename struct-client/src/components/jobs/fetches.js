@@ -52,3 +52,21 @@ export const fetchAssignContactsToJob = (contactObj, job_id) => {
         }
     })
 }
+
+export const fetchJobsAndSetState = (userId, toggleLoadAction, updateJobsAction) => {
+    fetch(`http://localhost:3000/users/${userId}`, {
+        credentials: 'include'
+    })
+    .then(r => {
+        if(r.ok) {
+            return r.json()
+        } else {
+            throw r
+        }
+    })
+    .then(user => {
+        updateJobsAction(user.jobs)
+        toggleLoadAction()
+    })
+    .catch(() => toggleLoadAction())
+}
