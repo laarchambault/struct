@@ -120,6 +120,21 @@ export const createProjectItem  = (project) => {
         }
     }
 }
+//used in EditProject and ProjectWindow to determine current user's permission level
+//requires currentJob and currentProject
+export const highestPermission = props => {
+    if(!props.currentProject) {
+        return props.currentJob.permission
+    } else if(Number.isInteger(props.currentJob.permission) && Number.isInteger(props.currentProject.permission)) {
+        return (props.currentJob.permission > props.currentProject.permission ?  props.currentJob.permission :  props.currentProject.permission)
+    } else if(Number.isInteger(props.currentJob.permission) && !Number.isInteger(props.currentProject.permission)) {
+        return props.currentJob.permission
+    } else if(!Number.isInteger(props.currentJob.permission) && Number.isInteger(props.currentProject.permission)) {
+        return props.currentProject.permission
+    } else if(!Number.isInteger(props.currentJob.permission) && !Number.isInteger(props.currentProject.permission)) {
+        return null
+    }
+}
 //used in ProjectWindow to create items on Timeline component
 export const groups = [{ id: 1, title: '',
 stackItems: true }]

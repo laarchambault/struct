@@ -1,5 +1,5 @@
 import React from 'react'
-import { fetchProjects, fetchUserProjects, createProjectItem, groups, keys, updateItemList } from './projectFunctions'
+import { fetchProjects, fetchUserProjects, createProjectItem, groups, keys, updateItemList, highestPermission } from './projectFunctions'
 import ShowProject from './ShowProject'
 import {  withRouter } from 'react-router-dom'
 import EditProject from './EditProject'
@@ -36,6 +36,9 @@ class ProjectWindow extends React.Component {
     }
 
     handleCanvasClick = (groupId, time, e) => {
+        if(highestPermission(this.props) !== 1) {
+            return
+        }
         this.setState({newStartTime: time})
         this.setView('new')
     }
@@ -100,18 +103,12 @@ class ProjectWindow extends React.Component {
         this.props.setCurrentProject(project)
     }
 
-    currentPermission = () => {
-        const project = this.props.userProjects.find( userProject => 
-            userProject.project_id === this.props.currentProject.id
-            )
-        if(project){
-            return project.permission
-        } else {
-            return null
-        } 
-    }
+
 
     handleItemMove = (itemId, dragTime, newGroupOrder) => {
+        if(highestPermission(this.props) !== 1 && highestPermission(this.props) !== 2) {
+            return
+        }
         //fetch request to update start and end times by number of milliseconds different in dragTime
         fetch(`http://localhost:3000/projects/${itemId}/move`, {
             method: 'PATCH',
@@ -134,6 +131,9 @@ class ProjectWindow extends React.Component {
     }
 
     handleItemResize = (itemId, time, edge) => {
+        if(highestPermission(this.props) !== 1 && highestPermission(this.props) !== 2) {
+            return
+        }
         fetch(`http://localhost:3000/projects/${itemId}/resize`, {
             method: 'PATCH',
             credentials: "include",

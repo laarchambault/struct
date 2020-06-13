@@ -2,7 +2,7 @@ import React from 'react'
 import { convertUserToUnix } from '../../calculations/timeConversions.js'
 import { connect } from 'react-redux'
 import { Form, Button } from 'semantic-ui-react'
-import { statusOptions, returnEditStateFromProject, fetchAssignContactsToProject, fetchUpdateProject } from './projectFunctions'
+import { statusOptions, returnEditStateFromProject, fetchAssignContactsToProject, fetchUpdateProject, highestPermission } from './projectFunctions'
 import ProjectContactAssignForm from '../contacts/ProjectContactAssignForm.js'
 import Loading from '../../Loading.js'
 
@@ -53,14 +53,11 @@ class EditProject extends React.Component {
     }
 
     contactsWithLowerOrEqualPermissionThanCurrentUser = () => {
-        const userPermission = this.highestPermission()
-        debugger
+        const userPermission = highestPermission(this.props)
         const higherChecked = [...this.state.checkedContacts].filter( record => {
             return (record.permission < userPermission) || (record.permission === null)
         })
-        debugger
         const idsOnlyHigherChecked = higherChecked.map(contactObj => contactObj.user_id)
-        debugger
         return this.props.contacts.filter(contact => 
             !idsOnlyHigherChecked.includes(contact.id)  
         )
@@ -137,17 +134,17 @@ class EditProject extends React.Component {
         }
     }
 
-    highestPermission = () => {
-        if(Number.isInteger(this.props.currentJob.permission) && Number.isInteger(this.props.currentProject.permission)) {
-            return (this.props.currentJob.permission > this.props.currentProject.permission ?  this.props.currentJob.permission :  this.props.currentProject.permission)
-        } else if(Number.isInteger(this.props.currentJob.permission) && !Number.isInteger(this.props.currentProject.permission)) {
-            return this.props.currentJob.permission
-        } else if(!Number.isInteger(this.props.currentJob.permission) && Number.isInteger(this.props.currentProject.permission)) {
-            return this.props.currentProject.permission
-        } else if(!Number.isInteger(this.props.currentJob.permission) && !Number.isInteger(this.props.currentProject.permission)) {
-            return null
-        }
-    }
+    // highestPermission = () => {
+    //     if(Number.isInteger(this.props.currentJob.permission) && Number.isInteger(this.props.currentProject.permission)) {
+    //         return (this.props.currentJob.permission > this.props.currentProject.permission ?  this.props.currentJob.permission :  this.props.currentProject.permission)
+    //     } else if(Number.isInteger(this.props.currentJob.permission) && !Number.isInteger(this.props.currentProject.permission)) {
+    //         return this.props.currentJob.permission
+    //     } else if(!Number.isInteger(this.props.currentJob.permission) && Number.isInteger(this.props.currentProject.permission)) {
+    //         return this.props.currentProject.permission
+    //     } else if(!Number.isInteger(this.props.currentJob.permission) && !Number.isInteger(this.props.currentProject.permission)) {
+    //         return null
+    //     }
+    // }
 
     render() {
         return(
@@ -163,7 +160,7 @@ class EditProject extends React.Component {
                     value={this.state.name} 
                     name="name" 
                     onChange={this.handleChange} 
-                    disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                    disabled={ highestPermission(this.props) === 1 || highestPermission(this.props) === 2 ? false : true}
                     />
                     
                     
@@ -175,7 +172,7 @@ class EditProject extends React.Component {
                             value={this.state.s_month} 
                             name="s_month" 
                             onChange={this.handleChange} 
-                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            disabled={ highestPermission(this.props) === 1 || highestPermission(this.props) === 2 ? false : true}
                             />
                         <Form.Input width='2'
                             label='Day (DD) ' 
@@ -183,7 +180,7 @@ class EditProject extends React.Component {
                             value={this.state.s_day} 
                             name="s_day" 
                             onChange={this.handleChange} 
-                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            disabled={ highestPermission(this.props) === 1 || highestPermission(this.props) === 2 ? false : true}
                             />
                         <Form.Input width='2'
                             label='Hour (HH) ' 
@@ -191,7 +188,7 @@ class EditProject extends React.Component {
                             value={this.state.s_hour} 
                             name="s_hour" 
                             onChange={this.handleChange} 
-                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            disabled={ highestPermission(this.props) === 1 || highestPermission(this.props) === 2 ? false : true}
                             />
                         <Form.Input width='2'
                             label='Minute (MM) ' 
@@ -199,7 +196,7 @@ class EditProject extends React.Component {
                             value={this.state.s_minute} 
                             name="s_minute" 
                             onChange={this.handleChange} 
-                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            disabled={ highestPermission(this.props) === 1 || highestPermission(this.props) === 2 ? false : true}
                             />
                         <Form.Input width='3'
                             label='Year (YYYY) ' 
@@ -207,7 +204,7 @@ class EditProject extends React.Component {
                             value={this.state.s_year} 
                             name="s_year" 
                             onChange={this.handleChange} 
-                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            disabled={ highestPermission(this.props) === 1 || highestPermission(this.props) === 2 ? false : true}
                             />
                     </Form.Group>
                     
@@ -220,7 +217,7 @@ class EditProject extends React.Component {
                             value={this.state.e_month} 
                             name="e_month" 
                             onChange={this.handleChange} 
-                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            disabled={ highestPermission(this.props) === 1 || highestPermission(this.props) === 2 ? false : true}
                             /><br/>
                         <Form.Input width='2'
                             label='Day (DD) ' 
@@ -228,7 +225,7 @@ class EditProject extends React.Component {
                             value={this.state.e_day} 
                             name="e_day" 
                             onChange={this.handleChange} 
-                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            disabled={ highestPermission(this.props) === 1 || highestPermission(this.props) === 2 ? false : true}
                             /><br/>
                         <Form.Input width='2'
                             label='Hour (HH) ' 
@@ -236,7 +233,7 @@ class EditProject extends React.Component {
                             value={this.state.e_hour} 
                             name="e_hour" 
                             onChange={this.handleChange} 
-                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            disabled={ highestPermission(this.props) === 1 || highestPermission(this.props) === 2 ? false : true}
                             /><br/>
                         <Form.Input width='2'
                             label='Minute (MM) ' 
@@ -244,7 +241,7 @@ class EditProject extends React.Component {
                             value={this.state.e_minute} 
                             name="e_minute" 
                             onChange={this.handleChange} 
-                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            disabled={ highestPermission(this.props) === 1 || highestPermission(this.props) === 2 ? false : true}
                             /><br/>
                         <Form.Input width='3'
                             label='Year (YYYY) ' 
@@ -252,7 +249,7 @@ class EditProject extends React.Component {
                             value={this.state.e_year} 
                             name="e_year" 
                             onChange={this.handleChange} 
-                            disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                            disabled={ highestPermission(this.props) === 1 || highestPermission(this.props) === 2 ? false : true}
                             /><br/>
                     </Form.Group>
 
@@ -266,7 +263,7 @@ class EditProject extends React.Component {
                         selection='true'
                         options={statusOptions}
                         onChange={this.handleDropdown}
-                        disabled={ this.highestPermission() === 1 || this.highestPermission() === 2 ? false : true}
+                        disabled={ highestPermission(this.props) === 1 || highestPermission(this.props) === 2 ? false : true}
                     />
                     {this.contactsWithLowerOrEqualPermissionThanCurrentUser().length > 0 ?
                         <>
@@ -276,7 +273,7 @@ class EditProject extends React.Component {
                             <ProjectContactAssignForm 
                             key={`contact ${contact.id}`}
                             contact={contact}
-                            permission={this.highestPermission()}
+                            permission={highestPermission(this.props)}
                             handleChange={this.handleContactChange} 
                             checkedContacts={this.state.checkedContacts}
                             value={this.dropdownValue(contact.id)}
